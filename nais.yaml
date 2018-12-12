@@ -1,0 +1,15 @@
+name: samordning-hendelse-innlastning
+image: repo.adeo.no:5443/samordning-hendelse-innlastning
+team: teampeon
+replicas:
+  min: 1
+  max: 1
+resources:
+  limits:
+    cpu: 1000m
+    memory: 384Mi
+  requests:
+    cpu: 500m
+    memory: 256Mi
+prometheus:
+  enabled: true
