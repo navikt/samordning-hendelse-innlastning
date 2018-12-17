@@ -1,0 +1,27 @@
+{
+  "namespace": "no.nav.samordning.schema",
+  "type": "record",
+  "name": "SamordningHendelse",
+  "fields": [
+    {
+      "name": "identifikator",
+      "type": "string"
+    },
+    {
+      "name": "ytelsesType",
+      "type": "string"
+    },
+    {
+      "name": "vedtakId",
+      "type": "string"
+    },
+    {
+      "name": "fom",
+      "type": "string"
+    },
+    {
+      "name": "tom",
+      "type": ["string", "null"]
+    }
+  ]
+}
