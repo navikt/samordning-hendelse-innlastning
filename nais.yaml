@@ -13,3 +13,10 @@ resources:
     memory: 256Mi
 prometheus:
   enabled: true
+fasitResources:
+  used:
+    - alias: srvsamordning-hendelse-innlastning
+      resourceType: credential
+      propertyMap:
+        username: KAFKA_USERNAME
+        password: KAFKA_PASSWORD
