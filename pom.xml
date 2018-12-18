@@ -25,7 +25,6 @@
 
         <kafka.version>2.1.0</kafka.version>
         <confluent.version>5.1.0</confluent.version>
-        <avro.version>1.8.2</avro.version>
 
         <mainClass>no.nav.samordning.Application</mainClass>
     </properties>
@@ -44,6 +43,19 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>no.nav.samordning</groupId>
+            <artifactId>samordning-schema</artifactId>
+            <version>1</version>
+        </dependency>
+
+        <!-- Nais -->
+        <dependency>
+            <groupId>no.nav.opptjening</groupId>
+            <artifactId>nais-support</artifactId>
+            <version>8</version>
+        </dependency>
+
         <!-- Kafka -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
@@ -60,22 +72,6 @@
                     <artifactId>slf4j-log4j12</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-
-
-        <!-- Nais -->
-        <dependency>
-            <groupId>no.nav.opptjening</groupId>
-            <artifactId>nais-support</artifactId>
-            <version>8</version>
-        </dependency>
-
-        <!-- Avro schema -->
-        <dependency>
-            <groupId>org.apache.avro</groupId>
-            <artifactId>avro</artifactId>
-            <version>${avro.version}</version>
         </dependency>
 
         <!-- Test -->
@@ -106,24 +102,6 @@
             </testResource>
         </testResources>
         <plugins>
-
-            <!-- avro to java conversion-->
-            <plugin>
-                <groupId>org.apache.avro</groupId>
-                <artifactId>avro-maven-plugin</artifactId>
-                <version>${avro.version}</version>
-                <configuration>
-                    <stringType>String</stringType>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>schema</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
