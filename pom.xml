@@ -46,14 +46,14 @@
         <dependency>
             <groupId>no.nav.samordning</groupId>
             <artifactId>samordning-schema</artifactId>
-            <version>1</version>
+            <version>3</version>
         </dependency>
 
         <!-- Nais -->
         <dependency>
             <groupId>no.nav.opptjening</groupId>
             <artifactId>nais-support</artifactId>
-            <version>8</version>
+            <version>16</version>
         </dependency>
 
         <!-- Kafka -->
