@@ -2,23 +2,24 @@
 @Library('peon-pipeline') _
 
 node {
+    def appToken
     def commitHash
     try {
         cleanWs()
 
         def version
         stage("checkout") {
-            withCredentials([string(credentialsId: 'navikt-ci-oauthtoken', variable: 'GITHUB_OAUTH_TOKEN')]) {
-                sh "git init"
-                sh "git pull https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/navikt/samordning-hendelse-innlastning.git"
-            }
+            appToken = github.generateAppToken()
+
+            sh "git init"
+            sh "git pull https://x-access-token:$appToken@github.com/navikt/samordning-hendelse-innlastning.git"
 
             sh "make bump-version"
 
             version = sh(script: 'cat VERSION', returnStdout: true).trim()
 
             commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
-            github.commitStatus("navikt-ci-oauthtoken", "navikt/samordning-hendelse-innlastning", 'continuous-integration/jenkins', commitHash, 'pending', "Build #${env.BUILD_NUMBER} has started")
+            github.commitStatus("pending", "navikt/samordning-hendelse-innlastning", appToken, commitHash)
         }
 
         stage("build") {
@@ -32,9 +33,7 @@ node {
 
             sh "make release"
 
-            withCredentials([string(credentialsId: 'navikt-ci-oauthtoken', variable: 'GITHUB_OAUTH_TOKEN')]) {
-                sh "git push --tags https://${GITHUB_OAUTH_TOKEN}@github.com/navikt/samordning-hendelse-innlastning HEAD:master"
-            }
+            sh "git push --tags https://x-access-token:$appToken@github.com/navikt/samordning-hendelse-innlastning HEAD:master"
         }
 
         stage("upload manifest") {
@@ -71,9 +70,9 @@ node {
         //    ])
         //}
 
-        github.commitStatus("navikt-ci-oauthtoken", "navikt/samordning-hendelse-innlastning", 'continuous-integration/jenkins', commitHash, 'success', "Build #${env.BUILD_NUMBER} has finished")
+        github.commitStatus("success", "navikt/samordning-hendelse-innlastning", appToken, commitHash)
     } catch (err) {
-        github.commitStatus("navikt-ci-oauthtoken", "navikt/samordning-hendelse-innlastning", 'continuous-integration/jenkins', commitHash, 'failure', "Build #${env.BUILD_NUMBER} has failed")
+        github.commitStatus("failure", "navikt/samordning-hendelse-innlastning", appToken, commitHash)
 
         throw err
     }
