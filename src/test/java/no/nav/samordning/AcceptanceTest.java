@@ -3,6 +3,7 @@ package no.nav.samordning;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import no.nav.common.JAASCredential;
 import no.nav.common.KafkaEnvironment;
+import no.nav.samordning.schema.SamordningHendelse;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -40,43 +41,45 @@ public class AcceptanceTest {
     private static final String LIVENESS_ENDPOINT = "isAlive";
     private static final String READINESS_ENDPOINT = "isReady";
     private static final String METRICS_ENDPOINT = "metrics";
+    private static final int HTTP_OK = 200;
 
-    //@BeforeAll
+    @BeforeAll
     static void setUp() {
 
+        System.setProperty("zookeeper.jmx.log4j.disable", Boolean.TRUE.toString());
         kafkaEnvironment = new KafkaEnvironment(numberOfBrokers, TOPICS, true, true, USERS, false);
         kafkaEnvironment.start();
         app = new Application();
         app.start();
     }
 
-    //@AfterAll
+    @AfterAll
     static void tearDown() throws Exception {
         app.stop();
     }
 
-    //@Test
+    @Test
     public void isAlive_endpoint_returns_200_OK_when_application_runs() throws Exception {
         HttpRequest request = createRequest(LIVENESS_ENDPOINT);
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+        assertEquals(HTTP_OK, response.statusCode());
     }
 
-    //@Test
+    @Test
     public void isReady_endpoint_returns_200_OK_when_application_runs() throws Exception {
         HttpRequest request = createRequest(READINESS_ENDPOINT);
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+        assertEquals(HTTP_OK, response.statusCode());
     }
 
-    //@Test
+    @Test
     public void metrics_endpoint_returns_200_OK_when_application_runs() throws Exception {
         HttpRequest request = createRequest(METRICS_ENDPOINT);
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+        assertEquals(HTTP_OK, response.statusCode());
     }
 
     private HttpRequest createRequest(String endpoint) {

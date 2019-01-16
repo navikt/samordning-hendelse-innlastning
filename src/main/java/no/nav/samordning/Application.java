@@ -21,9 +21,6 @@ public class Application {
     void start() {
         try {
             naisHttpServer.start();
-            while(true) {
-
-            }
         } catch (Exception e) {
             LOG.error("Application could not start", e);
             System.exit(1);
