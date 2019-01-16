@@ -56,19 +56,19 @@ node {
             ])
         }
 
-        //stage("deploy prod") {
-        //    build([
-        //            job       : 'nais-deploy-pipeline',
-        //            propagate : true,
-        //            parameters: [
-        //                    string(name: 'APP', value: "samordning-hendelse-innlastning"),
-        //                    string(name: 'REPO', value: "navikt/samordning-hendelse-innlastning"),
-        //                    string(name: 'VERSION', value: version),
-        //                    string(name: 'COMMIT_HASH', value: commitHash),
-        //                    string(name: 'DEPLOY_ENV', value: 'p')
-        //            ]
-        //    ])
-        //}
+        stage("deploy prod") {
+            build([
+                    job       : 'nais-deploy-pipeline',
+                    propagate : true,
+                    parameters: [
+                            string(name: 'APP', value: "samordning-hendelse-innlastning"),
+                            string(name: 'REPO', value: "navikt/samordning-hendelse-innlastning"),
+                            string(name: 'VERSION', value: version),
+                            string(name: 'COMMIT_HASH', value: commitHash),
+                            string(name: 'DEPLOY_ENV', value: 'p')
+                    ]
+            ])
+        }
 
         github.commitStatus("success", "navikt/samordning-hendelse-innlastning", appToken, commitHash)
     } catch (err) {
