@@ -22,7 +22,7 @@ public class DatabaseTests {
             .withUsername("user");
 
     @Test
-    public void write_To_And_Read_From_DB_In_Docker_Container() throws SQLException, ClassNotFoundException {
+    public void write_To_DB_In_Docker_Container() throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
 
         Connection conn = null;
