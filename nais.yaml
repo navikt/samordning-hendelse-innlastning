@@ -20,3 +20,5 @@ fasitResources:
       propertyMap:
         username: KAFKA_USERNAME
         password: KAFKA_PASSWORD
+    - alias: samordning-hendelse-innlasting-properties
+      resourceType: applicationproperties
