@@ -17,7 +17,6 @@ import static no.nav.samordning.innlastning.NaisEndpointTest.*;
 
 public class AcceptanceTest {
 
-
     private static final int NUMBER_OF_BROKERS = 1;
     private static final String TOPIC_NAME = KafkaConfiguration.SAMORDNING_HENDELSE_TOPIC;
     private static final List<String> TOPICS = Collections.singletonList(TOPIC_NAME);
@@ -39,7 +38,7 @@ public class AcceptanceTest {
     private static KafkaEnvironment kafkaEnvironment;
 
     @BeforeAll
-    static void setUp() throws Exception {
+    static void setUp() {
         System.setProperty("zookeeper.jmx.log4j.disable", Boolean.TRUE.toString());
         kafkaEnvironment = new KafkaEnvironment(NUMBER_OF_BROKERS, TOPICS, true, false, Collections.emptyList(), false);
         kafkaEnvironment.start();
@@ -54,6 +53,7 @@ public class AcceptanceTest {
         testEnvironment.put("SCHEMA_REGISTRY_URL", kafkaEnvironment.getSchemaRegistry().getUrl());
         testEnvironment.put("KAFKA_USERNAME", KAFKA_USERNAME);
         testEnvironment.put("KAFKA_PASSWORD", KAFKA_PASSWORD);
+        testEnvironment.put("KAFKA_SASL_MECHANISM", "PLAIN");
         return testEnvironment;
     }
 
@@ -67,11 +67,16 @@ public class AcceptanceTest {
     public void innlastning_reads_hendelser_from_kafka_and_persists_to_db() throws Exception {
 
         populate_hendelse_topic_with_test_records();
-        Thread.sleep(15*1000);
+
+        //Application needs to process records before the tests resume
+        Thread.sleep(5*1000);
 
         nais_platform_prerequisites_runs_OK();
-        //Thread.sleep(1000*8);
+
+        samordning_hendelse_stream_persists_to_db();
+
     }
+
 
     private void nais_platform_prerequisites_runs_OK() throws Exception {
         isAlive_endpoint_returns_200_OK_when_application_runs();
@@ -79,6 +84,9 @@ public class AcceptanceTest {
         metrics_endpoint_returns_200_OK_when_application_runs();
     }
 
+    private void samordning_hendelse_stream_persists_to_db() {
+
+    }
 
     private void populate_hendelse_topic_with_test_records() {
 
@@ -120,7 +128,6 @@ public class AcceptanceTest {
             if (exception != null) {
                 exception.printStackTrace();
             }
-            System.out.println(metadata.offset() + " " + metadata.serializedValueSize());
         };
     }
 }

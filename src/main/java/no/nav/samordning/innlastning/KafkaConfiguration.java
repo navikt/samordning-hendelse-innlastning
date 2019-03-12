@@ -14,26 +14,27 @@ public class KafkaConfiguration {
 
     public static final String SAMORDNING_HENDELSE_TOPIC = "aapen-samordning-samordningspliktigHendelse-v1";
 
-    public static class Properties {
+    public static class EnvironmentProperties {
         public static final String BOOTSTRAP_SERVERS = "KAFKA_BOOTSTRAP_SERVERS";
         public static final String SCHEMA_REGISTRY_URL = "SCHEMA_REGISTRY_URL";
         public static final String USERNAME = "KAFKA_USERNAME";
         public static final String PASSWORD = "KAFKA_PASSWORD";
+        public static final String SASL_MECHANISM = "KAFKA_SASL_MECHANISM";
     }
 
     private final String bootstrapServers;
     private final String schemaUrl;
     private final String password;
     private final String username;
+    private final String saslMechanism;
+
 
     public KafkaConfiguration(Map<String, String> env) {
-
-        this.bootstrapServers = env.get(Properties.BOOTSTRAP_SERVERS);
-        this.schemaUrl = env.getOrDefault(Properties.SCHEMA_REGISTRY_URL, "http://kafka-schema-registry.tpa:8081");
-
-        this.username = nullIfEmpty(env.get(Properties.USERNAME));
-        this.password = nullIfEmpty(env.get(Properties.PASSWORD));
-
+        this.bootstrapServers = env.get(EnvironmentProperties.BOOTSTRAP_SERVERS);
+        this.schemaUrl = env.getOrDefault(EnvironmentProperties.SCHEMA_REGISTRY_URL, "http://kafka-schema-registry.tpa:8081");
+        this.username = nullIfEmpty(env.get(EnvironmentProperties.USERNAME));
+        this.password = nullIfEmpty(env.get(EnvironmentProperties.PASSWORD));
+        this.saslMechanism = nullIfEmpty(env.getOrDefault(EnvironmentProperties.SASL_MECHANISM, "PLAIN"));
     }
 
     private static String nullIfEmpty(String value) {
