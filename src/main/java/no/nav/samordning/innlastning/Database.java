@@ -8,12 +8,11 @@ import java.sql.*;
 import java.util.Properties;
 
 class Database {
-    String url;
-    String user;
-    String password;
+    private String url;
+    private String user;
+    private String password;
 
     private final String SQL_INSERT_RECORD = "INSERT INTO T_SAMORDNINGSPLIKTIG_VEDTAK VALUES(to_json(?::json))";
-
     private Connection conn= null;
 
     Database(String url, String user, String password) {
@@ -21,8 +20,9 @@ class Database {
         this.user = user;
         this.password = password;
 
+
         try {
-            setConnection(url, user, password);
+            setConnection(this.url, this.user, this.password);
         } catch (SQLException s) {
             s.printStackTrace();
         }
