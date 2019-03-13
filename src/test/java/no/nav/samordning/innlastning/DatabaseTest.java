@@ -26,12 +26,13 @@ public class DatabaseTest {
 
     @Test
     public void write_hendelse_to_database() throws Exception {
-        database = new Database();
-        connection = database.getConnection(
+
+        database = new Database(
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
                 postgresContainer.getPassword()
         );
+        connection = database.getConnection();
 
         Hendelse hendelse = new Hendelse();
         hendelse.setYtelsesType("AAP");

@@ -8,21 +8,38 @@ import java.sql.*;
 import java.util.Properties;
 
 class Database {
+    String url;
+    String user;
+    String password;
 
     private final String SQL_INSERT_RECORD = "INSERT INTO T_SAMORDNINGSPLIKTIG_VEDTAK VALUES(to_json(?::json))";
 
     private Connection conn= null;
 
-    Connection getConnection(String url, String user, String password) throws SQLException {
+    Database(String url, String user, String password) {
+        this.url = url;
+        this.user = user;
+        this.password = password;
+
+        try {
+            setConnection(url, user, password);
+        } catch (SQLException s) {
+            s.printStackTrace();
+        }
+    }
+
+    private void setConnection(String url, String user, String password) throws SQLException {
         Properties connectionProps = new Properties();
         connectionProps.put("user", user);
         connectionProps.put("password", password);
 
-        conn = DriverManager.getConnection(
+        this.conn = DriverManager.getConnection(
                 url,
                 connectionProps);
+    }
 
-        return conn;
+    Connection getConnection() {
+        return this.conn;
     }
 
     void insert(Hendelse hendelse) throws SQLException{
