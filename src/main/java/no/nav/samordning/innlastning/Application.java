@@ -1,12 +1,16 @@
 package no.nav.samordning.innlastning;
 
+import io.prometheus.client.Counter;
 import no.nav.opptjening.nais.NaisHttpServer;
+import no.nav.samordning.innlastning.database.Database;
 import org.apache.kafka.streams.KafkaStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Properties;
+
+import static no.nav.samordning.innlastning.ApplicationProperties.*;
 
 public class Application {
 
@@ -16,7 +20,7 @@ public class Application {
     private volatile boolean shutdown = false;
 
     public static void main(String[] args) {
-        final Application app = new Application(System.getenv());
+        Application app = new Application(System.getenv());
         app.run();
     }
 
@@ -24,6 +28,12 @@ public class Application {
 
         KafkaConfiguration kafkaConfiguration = new KafkaConfiguration(env);
         Properties streamProperties = kafkaConfiguration.streamsConfiguration();
+
+        String jdbcUrl = getFromEnvironment(env,"DB_URL");
+        String dbUsername = getFromEnvironment(env, "DB_USERNAME");
+        String dbPassword = getFromEnvironment(env, "DB_PASSWORD");
+
+        Database database = new Database(jdbcUrl, dbPassword, dbUsername);
 
         NaisHttpServer naisHttpServer = new NaisHttpServer(this::isRunning, () -> true);
 
@@ -34,7 +44,7 @@ public class Application {
             System.exit(1);
         }
 
-        hendelseStream = SamordningHendelseStream.build(KafkaConfiguration.SAMORDNING_HENDELSE_TOPIC, streamProperties);
+        hendelseStream = SamordningHendelseStream.build(KafkaConfiguration.SAMORDNING_HENDELSE_TOPIC, streamProperties, database);
 
         hendelseStream.setUncaughtExceptionHandler((t, e) -> {
             LOG.error("Uncaught exception in thread {}, closing samordningHendelseStream", t, e);

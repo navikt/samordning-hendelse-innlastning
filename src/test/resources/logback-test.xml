@@ -6,7 +6,7 @@
 
     <logger name="no.nav.samordning.innlastning" level="DEBUG" />
 
-    <root level="ERROR">
+    <root level="INFO">
         <appender-ref ref="STDOUT_JSON" />
     </root>
 

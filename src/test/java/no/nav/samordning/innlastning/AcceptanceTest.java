@@ -2,37 +2,64 @@ package no.nav.samordning.innlastning;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
+import kafka.security.auth.PermissionType;
+import no.nav.common.JAASCredential;
 import no.nav.common.KafkaEnvironment;
 import no.nav.samordning.schema.SamordningHendelse;
 import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.producer.*;
+import org.apache.kafka.common.acl.AccessControlEntry;
+import org.apache.kafka.common.acl.AclBinding;
+import org.apache.kafka.common.acl.AclOperation;
+import org.apache.kafka.common.acl.AclPermissionType;
+import org.apache.kafka.common.resource.PatternType;
+import org.apache.kafka.common.resource.ResourcePattern;
+import org.apache.kafka.common.resource.ResourceType;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.MountableFile;
 
 import java.util.*;
 
+import static no.nav.samordning.innlastning.KafkaTestUtils.createConsumerAcl;
+import static no.nav.samordning.innlastning.KafkaTestUtils.createProducerAcl;
 import static no.nav.samordning.innlastning.NaisEndpointTest.*;
 
+
+@Testcontainers
 public class AcceptanceTest {
 
     private static final int NUMBER_OF_BROKERS = 1;
     private static final String TOPIC_NAME = KafkaConfiguration.SAMORDNING_HENDELSE_TOPIC;
     private static final List<String> TOPICS = Collections.singletonList(TOPIC_NAME);
+    private static final String TEST_PRODUCER_NAME = "testProducer";
+    private static final String TEST_PRODUCER_PASSWORD = "opensourcedPassword";
     private static final String KAFKA_USERNAME = "srvTest";
     private static final String KAFKA_PASSWORD = "opensourcedPassword";
 
-    private static final String IDENTIFIKATOR_1 = "12345678901";
-    private static final String IDENTIFIKATOR_2 = "12345678902";
-    private static final String YTELSESTYPE_1 = "AP";
-    private static final String YTELSESTYPE_2 = "UFR";
-    private static final String VEDTAK_ID_1 = "ABC123";
-    private static final String VEDTAK_ID_2 = "CDE456";
-    private static final String FOM_1 = "01-01-2020";
-    private static final String FOM_2 = "31-31-2020";
-    private static final String TOM_1 = "01-01-2010";
-    private static final String TOM_2 = null;
+    private static final String DATABASE_NAME = "samordninghendelser";
+    private static final String DATABASE_USERNAME = "samordninghendelser";
+    private static final String DATABASE_PASSWORD = "samordninghendelser";
+
+    @Container
+    private static PostgreSQLContainer postgresqlContainer = new PostgreSQLContainer<>()
+            .withDatabaseName(DATABASE_NAME)
+            .withUsername(DATABASE_USERNAME)
+            .withPassword(DATABASE_PASSWORD)
+            .withCopyFileToContainer(MountableFile.forClasspathResource("schema.sql"),
+                        "/docker-entrypoint-initdb.d/");
+
+    private static final String IDENTIFIKATOR = "12345678901";
+    private static final String YTELSESTYPE = "AP";
+    private static final String VEDTAK_ID = "ABC123";
+    private static final String FOM = "01-01-2020";
+    private static final String TOM = "01-01-2010";
 
     private static Application app;
     private static KafkaEnvironment kafkaEnvironment;
@@ -40,8 +67,24 @@ public class AcceptanceTest {
     @BeforeAll
     static void setUp() {
         System.setProperty("zookeeper.jmx.log4j.disable", Boolean.TRUE.toString());
-        kafkaEnvironment = new KafkaEnvironment(NUMBER_OF_BROKERS, TOPICS, true, false, Collections.emptyList(), false);
-        kafkaEnvironment.start();
+        kafkaEnvironment = new KafkaEnvironment(
+                NUMBER_OF_BROKERS,
+                TOPICS,
+                true,
+                true,
+                Arrays.asList(
+                        new JAASCredential(TEST_PRODUCER_NAME, TEST_PRODUCER_PASSWORD),
+                        new JAASCredential(KAFKA_USERNAME, KAFKA_PASSWORD)
+                ),
+                true
+        );
+
+        AdminClient adminClient = kafkaEnvironment.getAdminClient();
+
+        adminClient.createAcls(
+                createProducerAcl(Collections.singletonMap(TOPIC_NAME, TEST_PRODUCER_NAME)));
+        adminClient.createAcls(
+                createConsumerAcl(Collections.singletonMap(TOPIC_NAME, KAFKA_USERNAME)));
 
         app = new Application(testEnvironment());
         app.run();
@@ -54,29 +97,36 @@ public class AcceptanceTest {
         testEnvironment.put("KAFKA_USERNAME", KAFKA_USERNAME);
         testEnvironment.put("KAFKA_PASSWORD", KAFKA_PASSWORD);
         testEnvironment.put("KAFKA_SASL_MECHANISM", "PLAIN");
+        testEnvironment.put("KAFKA_SECURITY_PROTOCOL", "SASL_PLAINTEXT");
+        testEnvironment.put("DB_URL", postgresqlContainer.getJdbcUrl());
+        testEnvironment.put("DB_USERNAME", postgresqlContainer.getUsername());
+        testEnvironment.put("DB_PASSWORD", postgresqlContainer.getPassword());
         return testEnvironment;
     }
 
     @AfterAll
     static void tearDown() {
-        kafkaEnvironment.tearDown();
         app.shutdown();
+        kafkaEnvironment.tearDown();
     }
 
     @Test
     public void innlastning_reads_hendelser_from_kafka_and_persists_to_db() throws Exception {
 
-        populate_hendelse_topic_with_test_records();
+        ProducerRecord<String, SamordningHendelse> record = new ProducerRecord<>(
+                TOPIC_NAME,
+                null,
+                new SamordningHendelse(IDENTIFIKATOR, YTELSESTYPE, VEDTAK_ID, FOM, TOM)
+        );
+
+        populate_hendelse_topic(record);
 
         //Application needs to process records before the tests resume
         Thread.sleep(5*1000);
 
         nais_platform_prerequisites_runs_OK();
 
-        samordning_hendelse_stream_persists_to_db();
-
     }
-
 
     private void nais_platform_prerequisites_runs_OK() throws Exception {
         isAlive_endpoint_returns_200_OK_when_application_runs();
@@ -84,29 +134,10 @@ public class AcceptanceTest {
         metrics_endpoint_returns_200_OK_when_application_runs();
     }
 
-    private void samordning_hendelse_stream_persists_to_db() {
-
-    }
-
-    private void populate_hendelse_topic_with_test_records() {
-
-        List<ProducerRecord<String, SamordningHendelse>> records = Arrays.asList(
-                samordningHendelseRecordWithNullKey(IDENTIFIKATOR_1, YTELSESTYPE_1, VEDTAK_ID_1, FOM_1, TOM_1),
-                samordningHendelseRecordWithNullKey(IDENTIFIKATOR_2, YTELSESTYPE_2, VEDTAK_ID_2, FOM_2, TOM_2)
-        );
-
+    private void populate_hendelse_topic(ProducerRecord<String, SamordningHendelse> record) {
         Producer<String, SamordningHendelse> testProducer = testProducer();
-
-        for(ProducerRecord<String, SamordningHendelse> record: records) {
-            testProducer.send(record, hendelseProducerCallback());
-        }
+        testProducer.send(record);
         testProducer.flush();
-    }
-
-    private ProducerRecord<String, SamordningHendelse> samordningHendelseRecordWithNullKey(String identifikator, String ytelsesType, String vedtakId, String fom, String tom) {
-        return new ProducerRecord<>(TOPIC_NAME, null,
-                new SamordningHendelse(identifikator, ytelsesType, vedtakId, fom, tom)
-        );
     }
 
     private Producer<String, SamordningHendelse> testProducer() {
@@ -114,7 +145,6 @@ public class AcceptanceTest {
         Properties producerProperties = new Properties();
         producerProperties.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafkaEnvironment.getBrokersURL());
         producerProperties.put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, kafkaEnvironment.getSchemaRegistry().getUrl());
-
         producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
         producerProperties.put(ProducerConfig.ACKS_CONFIG, "all");
@@ -123,10 +153,11 @@ public class AcceptanceTest {
         return new KafkaProducer<>(producerProperties);
     }
 
-    private static Callback hendelseProducerCallback() {
-        return (metadata, exception) -> {
-            if (exception != null) {
-                exception.printStackTrace();
+    private Callback hendelseCallback() {
+        return new Callback() {
+            @Override
+            public void onCompletion(RecordMetadata metadata, Exception exception) {
+                System.out.println(metadata.offset());
             }
         };
     }

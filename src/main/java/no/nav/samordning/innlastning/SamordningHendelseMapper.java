@@ -1,8 +1,10 @@
 package no.nav.samordning.innlastning;
 
+import no.nav.samordning.innlastning.database.Hendelse;
 import no.nav.samordning.schema.SamordningHendelse;
 
-class HendelseMapper {
+class SamordningHendelseMapper {
+
     static Hendelse mapToHendelse(SamordningHendelse samordningHendelse) {
         Hendelse hendelse = new Hendelse();
         hendelse.setVedtakId(samordningHendelse.getVedtakId());

@@ -118,6 +118,13 @@
             <version>0.0.2</version>
         </dependency>
 
+        <!-- Postgres -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.5</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -139,21 +146,17 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Test - Docker and Postgres -->
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
-            <version>1.10.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql </artifactId>
-            <version>1.10.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.5</version>
+            <version>1.10.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>1.10.6</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

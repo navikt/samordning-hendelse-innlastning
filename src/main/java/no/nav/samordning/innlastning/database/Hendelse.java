@@ -1,4 +1,4 @@
-package no.nav.samordning.innlastning;
+package no.nav.samordning.innlastning.database;
 
 public class Hendelse {
 
@@ -47,5 +47,16 @@ public class Hendelse {
         public void setTom(String tom) {
             this.tom = tom;
         }
+
+    @Override
+    public String toString() {
+        return "Hendelse{" +
+                "ytelsesType='" + ytelsesType + '\'' +
+                ", identifikator='" + identifikator + '\'' +
+                ", vedtakId='" + vedtakId + '\'' +
+                ", fom='" + fom + '\'' +
+                ", tom='" + tom + '\'' +
+                '}';
     }
+}
 
