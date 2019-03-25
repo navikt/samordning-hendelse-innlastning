@@ -3,7 +3,6 @@ package no.nav.samordning.innlastning.database;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import org.postgresql.util.PGobject;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -11,8 +10,6 @@ import org.testcontainers.utility.MountableFile;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +34,7 @@ class DatabaseTest {
     private final String FETCH_SQL = "SELECT * FROM HENDELSER";
 
     private static HikariDataSource ds;
+    private Database db;
 
     @BeforeAll
     static void createDatasource() {
@@ -44,27 +42,7 @@ class DatabaseTest {
         hikariConfig.setJdbcUrl(postgresqlContainer.getJdbcUrl());
         hikariConfig.setUsername(postgresqlContainer.getUsername());
         hikariConfig.setPassword(postgresqlContainer.getPassword());
-
         ds = new HikariDataSource(hikariConfig);
-    }
-
-    void insert(Hendelse hendelse) throws SQLException {
-
-        Jsonb jsonb = JsonbBuilder.create();
-        PGobject pGobject = new PGobject();
-        pGobject.setType("jsonb");
-        pGobject.setValue(jsonb.toJson(hendelse));
-
-        PreparedStatement insertStatement = ds.getConnection().prepareStatement(INSERT_RECORD_SQL);
-        insertStatement.setObject(1, pGobject, Types.OTHER);
-        insertStatement.executeUpdate();
-    }
-
-    private ResultSet fetch() throws Exception {
-        Statement statement = ds.getConnection().createStatement();
-        statement.execute(FETCH_SQL);
-        ResultSet resultSet = statement.getResultSet();
-        return resultSet;
     }
 
     @Test
@@ -76,9 +54,12 @@ class DatabaseTest {
         hendelse.setFom("2000-01-01");
         hendelse.setTom("2010-02-04");
 
-        insert(hendelse);
+        db = new Database(postgresqlContainer.getJdbcUrl(), postgresqlContainer.getUsername(), postgresqlContainer.getPassword());
+        db.insert(hendelse);
 
-        ResultSet resultSet = fetch();
+        Statement statement = ds.getConnection().createStatement();
+        statement.execute(FETCH_SQL);
+        ResultSet resultSet = statement.getResultSet();
 
         List<String> excpected = new ArrayList<>();
         List<String> actual = new ArrayList<>();
