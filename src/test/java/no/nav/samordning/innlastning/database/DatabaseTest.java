@@ -48,7 +48,6 @@ class DatabaseTest {
         ds = new HikariDataSource(hikariConfig);
     }
 
-    @Test
     void insert(Hendelse hendelse) throws SQLException {
 
         Jsonb jsonb = JsonbBuilder.create();
