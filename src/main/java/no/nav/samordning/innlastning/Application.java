@@ -1,8 +1,8 @@
 package no.nav.samordning.innlastning;
 
-import io.prometheus.client.Counter;
 import no.nav.opptjening.nais.NaisHttpServer;
 import no.nav.samordning.innlastning.database.Database;
+import no.nav.vault.jdbc.hikaricp.VaultError;
 import org.apache.kafka.streams.KafkaStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,16 @@ public class Application {
         Properties streamProperties = kafkaConfiguration.streamsConfiguration();
 
         String jdbcUrl = getFromEnvironment(env,"DB_URL");
-        String dbUsername = getFromEnvironment(env, "DB_USERNAME");
-        String dbPassword = getFromEnvironment(env, "DB_PASSWORD");
+        String mountPath = getFromEnvironment(env, "DB_MOUNTPATH");
+        String role = getFromEnvironment(env, "DB_ROLE");
 
-        Database database = new Database(jdbcUrl, dbPassword, dbUsername);
+        Database database = null;
+        try {
+            database = new Database(jdbcUrl, mountPath, role);
+        } catch (VaultError vaultError) {
+            LOG.error("Database access error. Could not connect to " + jdbcUrl, vaultError);
+            System.exit(1);
+        }
 
         NaisHttpServer naisHttpServer = new NaisHttpServer(this::isRunning, () -> true);
 
