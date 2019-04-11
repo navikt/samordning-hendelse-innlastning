@@ -65,7 +65,7 @@ public class ComponentTest {
         testEnvironment.put("KAFKA_SASL_MECHANISM", "PLAIN");
         testEnvironment.put("KAFKA_SECURITY_PROTOCOL", "PLAINTEXT");
         testEnvironment.put("DB_URL", postgresqlContainer.getJdbcUrl());
-        testEnvironment.put("DB_MOUNTPATH", DB_MOUNTPATH);
+        testEnvironment.put("DB_MOUNT_PATH", DB_MOUNT_PATH);
         testEnvironment.put("DB_ROLE", DB_ROLE);
         return testEnvironment;
     }

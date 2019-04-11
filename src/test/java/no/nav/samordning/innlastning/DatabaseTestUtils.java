@@ -16,7 +16,7 @@ import java.util.List;
 
 public class DatabaseTestUtils {
 
-    public static final String DB_MOUNTPATH = "secrets/test";
+    public static final String DB_MOUNT_PATH = "secrets/test";
     public static final String DB_ROLE = "postgres-user";
 
     private static Network network = Network.newNetwork();

@@ -30,7 +30,7 @@ public class Application {
         Properties streamProperties = kafkaConfiguration.streamsConfiguration();
 
         String jdbcUrl = getFromEnvironment(env,"DB_URL");
-        String mountPath = getFromEnvironment(env, "DB_MOUNTPATH");
+        String mountPath = getFromEnvironment(env, "DB_MOUNT_PATH");
         String role = getFromEnvironment(env, "DB_ROLE");
 
         Database database = null;

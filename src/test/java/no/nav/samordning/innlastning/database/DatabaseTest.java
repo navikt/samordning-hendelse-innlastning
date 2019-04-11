@@ -38,7 +38,7 @@ class DatabaseTest {
         runVaultContainerCommands(vaultContainer, postgresqlContainer.getContainerIpAddress());
         database = new Database(
                 postgresqlContainer.getJdbcUrl(),
-                DB_MOUNTPATH,
+                DB_MOUNT_PATH,
                 DB_ROLE
         );
     }
