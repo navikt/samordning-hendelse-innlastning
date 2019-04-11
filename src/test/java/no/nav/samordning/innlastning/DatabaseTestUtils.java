@@ -26,7 +26,7 @@ public class DatabaseTestUtils {
     private static final String DATABASE_USERNAME = "postgres";
     private static final String DATABASE_PASSWORD = "password";
     private static final String LOCALHOST_IP_ADDRESS = "127.0.0.1";
-    private static final String POSTGRES_INIT_DB_SCRIPT_FOLDER = "/docker-entrypoint-initdb.d/";
+    private static final String POSTGRES_INIT_DB_SCRIPT_FOLDER = "/docker-entrypoint-initdb.d/schema.sql";
     private static final String INIT_SCRIPT = "schema.sql";
     private static final int POSTGRES_PORT = 5432;
     private static final int VAULT_PORT = 8200;
@@ -58,7 +58,7 @@ public class DatabaseTestUtils {
                 .withNetwork(network)
                 .withNetworkAliases("vault")
                 .withExtraHost("host", LOCALHOST_IP_ADDRESS)
-                .withCopyFileToContainer(MountableFile.forClasspathResource(DB_POLICY_CONFIG_FILE), "/");
+                .withCopyFileToContainer(MountableFile.forClasspathResource(DB_POLICY_CONFIG_FILE), "/" + DB_POLICY_CONFIG_FILE);
     }
 
     public static void runVaultContainerCommands(GenericContainer vaultContainer) throws Exception  {
