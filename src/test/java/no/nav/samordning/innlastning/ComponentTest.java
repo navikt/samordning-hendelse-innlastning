@@ -52,7 +52,7 @@ public class ComponentTest {
         System.setProperty("zookeeper.jmx.log4j.disable", Boolean.TRUE.toString());
 
         kafkaEnvironment = new KafkaEnvironment(NUMBER_OF_BROKERS, TOPICS, Collections.emptyList(), true, false, Collections.emptyList(), true, new Properties());
-        runVaultContainerCommands(vaultContainer);
+        runVaultContainerCommands(vaultContainer, postgresqlContainer.getContainerIpAddress());
         app = new Application(testEnvironment());
     }
 

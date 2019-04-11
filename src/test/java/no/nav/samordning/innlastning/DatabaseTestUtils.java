@@ -61,8 +61,8 @@ public class DatabaseTestUtils {
                 .withCopyFileToContainer(MountableFile.forClasspathResource(DB_POLICY_CONFIG_FILE), "/" + DB_POLICY_CONFIG_FILE);
     }
 
-    public static void runVaultContainerCommands(GenericContainer vaultContainer) throws Exception  {
-        System.setProperty("VAULT_ADDR", "http://localhost:" + vaultContainer.getMappedPort(8200));
+    public static void runVaultContainerCommands(GenericContainer vaultContainer, String postgresContainerIpAddress) throws Exception  {
+        System.setProperty("VAULT_ADDR", "http://" + postgresContainerIpAddress + ":" + vaultContainer.getMappedPort(8200));
         System.setProperty("VAULT_TOKEN", "secret");
 
         vaultContainer.execInContainer("vault", "secrets", "enable", "-path=secrets/test", "database");

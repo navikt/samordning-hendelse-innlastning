@@ -35,7 +35,7 @@ class DatabaseTest {
 
     @BeforeAll
     static void setup() throws Exception {
-        runVaultContainerCommands(vaultContainer);
+        runVaultContainerCommands(vaultContainer, postgresqlContainer.getContainerIpAddress());
         database = new Database(
                 postgresqlContainer.getJdbcUrl(),
                 DB_MOUNTPATH,
