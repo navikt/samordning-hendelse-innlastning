@@ -31,6 +31,7 @@ public class ComponentTest {
     private static final List<String> TOPICS = Collections.singletonList(TOPIC_NAME);
     private static final String KAFKA_USERNAME = "srvTest";
     private static final String KAFKA_PASSWORD = "opensourcedPassword";
+
     private static final String IDENTIFIKATOR = "12345678901";
     private static final String YTELSESTYPE = "AP";
     private static final String VEDTAK_ID = "ABC123";
@@ -49,7 +50,8 @@ public class ComponentTest {
     @BeforeAll
     static void setUp() throws Exception {
         System.setProperty("zookeeper.jmx.log4j.disable", Boolean.TRUE.toString());
-        kafkaEnvironment = new KafkaEnvironment(NUMBER_OF_BROKERS, TOPICS, true, false, Collections.emptyList(), true);
+
+        kafkaEnvironment = new KafkaEnvironment(NUMBER_OF_BROKERS, TOPICS, Collections.emptyList(), true, false, Collections.emptyList(), true, new Properties());
         runVaultContainerCommands(vaultContainer);
         app = new Application(testEnvironment());
     }
