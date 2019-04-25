@@ -2,7 +2,8 @@ package no.nav.samordning.innlastning;
 
 import no.nav.samordning.innlastning.database.Hendelse;
 import no.nav.samordning.schema.SamordningHendelse;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
