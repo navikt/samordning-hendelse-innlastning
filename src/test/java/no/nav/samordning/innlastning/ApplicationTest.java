@@ -2,21 +2,34 @@ package no.nav.samordning.innlastning;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ApplicationTest {
+class ApplicationTest {
+
+    private static final String DB_URL_ENV_KEY = "DB_URL";
+    private static final String DB_MOUNT_PATH_ENV_KEY = "DB_MOUNT_PATH";
+    private static final String DB_ROLE_ENV_KEY = "DB_ROLE";
 
     @Test
-    public void Application_throws_MissingApplicationConfig_when_database_config_is_missing_from_environment() {
+    void Application_throws_MissingVaultToken_when_vault_token_is_missing() {
         Map<String, String> testEnvironment = new HashMap<>();
-        testEnvironment.put("KAFKA_BOOTSTRAP_SERVERS", "brokersUrl");
-        testEnvironment.put("SCHEMA_REGISTRY_URL", "schema.registry.url");
-        testEnvironment.put("KAFKA_USERNAME", "kafka_username");
-        testEnvironment.put("KAFKA_PASSWORD", "opensourcedPassword");
-        testEnvironment.put("KAFKA_SASL_MECHANISM", "PLAIN");
+        testEnvironment.put(DB_URL_ENV_KEY, "bogus");
+        testEnvironment.put(DB_MOUNT_PATH_ENV_KEY, "bogus");
+        testEnvironment.put(DB_ROLE_ENV_KEY, "bogus");
+
+        assertThrows(
+                MissingVaultToken.class,
+                () -> new Application(testEnvironment)
+        );
+    }
+
+    @Test
+    void Application_throws_MissingApplicationConfig_when_database_config_is_missing_from_environment() {
+        Map<String, String> testEnvironment = Collections.emptyMap();
 
         assertThrows(
                 MissingApplicationConfig.class,

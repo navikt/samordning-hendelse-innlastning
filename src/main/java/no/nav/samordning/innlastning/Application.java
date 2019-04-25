@@ -1,11 +1,9 @@
 package no.nav.samordning.innlastning;
 
 import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import no.nav.opptjening.nais.NaisHttpServer;
 import no.nav.samordning.innlastning.database.Database;
 import no.nav.samordning.innlastning.database.DatasourceConfig;
-import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import no.nav.vault.jdbc.hikaricp.VaultError;
 import org.apache.kafka.streams.KafkaStreams;
 import org.slf4j.Logger;
@@ -21,6 +19,9 @@ import static no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil.*;
 public class Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
+    private static final String DB_URL_ENV_KEY = "DB_URL";
+    private static final String DB_MOUNT_PATH_ENV_KEY = "DB_MOUNT_PATH";
+    private static final String DB_ROLE_ENV_KEY = "DB_ROLE";
     private final KafkaStreams hendelseStream;
 
     private volatile boolean shutdown = false;
@@ -35,9 +36,9 @@ public class Application {
         KafkaConfiguration kafkaConfiguration = new KafkaConfiguration(env);
         Properties streamProperties = kafkaConfiguration.streamsConfiguration();
 
-        String jdbcUrl = getFromEnvironment(env,"DB_URL");
-        String mountPath = getFromEnvironment(env, "DB_MOUNT_PATH");
-        String role = getFromEnvironment(env, "DB_ROLE");
+        String jdbcUrl = getFromEnvironment(env, DB_URL_ENV_KEY);
+        String mountPath = getFromEnvironment(env, DB_MOUNT_PATH_ENV_KEY);
+        String role = getFromEnvironment(env, DB_ROLE_ENV_KEY);
 
         Database database = null;
         try {
@@ -47,6 +48,8 @@ public class Application {
         } catch (VaultError vaultError) {
             LOG.error("Database access error. Could not connect to " + jdbcUrl, vaultError);
             System.exit(1);
+        } catch (RuntimeException e) {
+            throw new MissingVaultToken("Vault token missing. Check DB env variables", e);
         }
 
         NaisHttpServer naisHttpServer = new NaisHttpServer(this::isRunning, () -> true);
