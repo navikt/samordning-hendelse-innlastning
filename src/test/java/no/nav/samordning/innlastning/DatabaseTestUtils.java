@@ -8,6 +8,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.utility.MountableFile;
 
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -84,7 +85,7 @@ public class DatabaseTestUtils {
                 "-field", "token");
     }
 
-    public static String getFirstJsonHendelseFromDb(HikariDataSource pgsqlDatasource) throws SQLException {
+    public static String getFirstJsonHendelseFromDb(DataSource pgsqlDatasource) throws SQLException {
 
         List<String> jsonHendelse = new ArrayList<>();
         Statement statement = pgsqlDatasource.getConnection().createStatement();

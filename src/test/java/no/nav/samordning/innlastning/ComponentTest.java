@@ -16,6 +16,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import javax.sql.DataSource;
 import java.util.*;
 
 import static no.nav.samordning.innlastning.DatabaseTestUtils.*;
@@ -54,6 +55,7 @@ public class ComponentTest {
         kafkaEnvironment = new KafkaEnvironment(NUMBER_OF_BROKERS, TOPICS, Collections.emptyList(), true, false, Collections.emptyList(), true, new Properties());
         runVaultContainerCommands(vaultContainer, postgresqlContainer.getContainerIpAddress());
         app = new Application(testEnvironment());
+        app.run();
     }
 
     private static Map<String, String> testEnvironment() {
@@ -78,8 +80,6 @@ public class ComponentTest {
     @Test
     void innlastning_reads_hendelser_from_kafka_and_persists_hendelse_to_db_as_json() throws Exception {
 
-        app.run();
-
         SamordningHendelse samordningHendelse = new SamordningHendelse(IDENTIFIKATOR, YTELSESTYPE, VEDTAK_ID, FOM, TOM);
 
         String expectedHendelse = "{" +
@@ -90,11 +90,7 @@ public class ComponentTest {
                 "\"identifikator\": \"" + IDENTIFIKATOR + "\"" +
                 "}";
 
-
-        ProducerRecord<String, SamordningHendelse> record = new ProducerRecord<>(
-                TOPIC_NAME, null, samordningHendelse
-        );
-
+        ProducerRecord<String, SamordningHendelse> record = new ProducerRecord<>(TOPIC_NAME, null, samordningHendelse);
         populate_hendelse_topic(record);
 
         //Application needs to process records before the tests resume
@@ -102,7 +98,7 @@ public class ComponentTest {
 
         nais_platform_prerequisites_runs_OK();
 
-        HikariDataSource postgresqlDatasource = createPgsqlDatasource(postgresqlContainer);
+        DataSource postgresqlDatasource = createPgsqlDatasource(postgresqlContainer);
         String actualHendelse = getFirstJsonHendelseFromDb(postgresqlDatasource);
 
         assertEquals(expectedHendelse, actualHendelse);

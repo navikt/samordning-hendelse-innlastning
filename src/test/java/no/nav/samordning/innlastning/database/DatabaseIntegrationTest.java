@@ -1,9 +1,7 @@
 package no.nav.samordning.innlastning.database;
 
 import com.zaxxer.hikari.HikariConfig;
-import no.nav.samordning.innlastning.DatabaseTestUtils;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
-import no.nav.vault.jdbc.hikaricp.VaultError;
 import org.junit.jupiter.api.*;
 
 import org.testcontainers.containers.GenericContainer;
@@ -18,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class DatabaseTest {
+class DatabaseIntegrationTest {
 
     private static final String VEDTAK_ID = "JKL678";
     private static final String IDENTIFIKATOR = "987654321";
@@ -33,7 +31,6 @@ class DatabaseTest {
 
     @Container
     private static GenericContainer vaultContainer = setUpVaultContainer();
-
 
     @BeforeAll
     static void setUp() throws Exception {
@@ -68,7 +65,7 @@ class DatabaseTest {
     @Order(2)
     void insert_fails_when_database_is_down() {
 
-        breakDbConnection();
+        breakDatabaseConnection();
 
         assertThrows(
                 FailedInsert.class,
@@ -76,7 +73,7 @@ class DatabaseTest {
         );
     }
 
-    private void breakDbConnection() {
+    private void breakDatabaseConnection() {
         postgresqlContainer.stop();
         vaultContainer.stop();
     }

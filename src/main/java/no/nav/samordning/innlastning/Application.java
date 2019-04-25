@@ -1,16 +1,22 @@
 package no.nav.samordning.innlastning;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import no.nav.opptjening.nais.NaisHttpServer;
 import no.nav.samordning.innlastning.database.Database;
+import no.nav.samordning.innlastning.database.DatasourceConfig;
+import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import no.nav.vault.jdbc.hikaricp.VaultError;
 import org.apache.kafka.streams.KafkaStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.util.Map;
 import java.util.Properties;
 
 import static no.nav.samordning.innlastning.ApplicationProperties.*;
+import static no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil.*;
 
 public class Application {
 
@@ -35,14 +41,15 @@ public class Application {
 
         Database database = null;
         try {
-            database = new Database(jdbcUrl, mountPath, role);
+            HikariConfig datasourceConfig = DatasourceConfig.getDatasourceConfig(jdbcUrl);
+            DataSource dataSource = createHikariDataSourceWithVaultIntegration(datasourceConfig, mountPath, role);
+            database = new Database(dataSource);
         } catch (VaultError vaultError) {
             LOG.error("Database access error. Could not connect to " + jdbcUrl, vaultError);
             System.exit(1);
         }
 
         NaisHttpServer naisHttpServer = new NaisHttpServer(this::isRunning, () -> true);
-
         try {
             naisHttpServer.start();
         } catch (Exception e) {
