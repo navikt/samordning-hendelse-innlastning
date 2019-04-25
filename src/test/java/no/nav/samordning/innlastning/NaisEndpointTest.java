@@ -7,7 +7,7 @@ import java.net.http.HttpResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NaisEndpointTest {
+class NaisEndpointTest {
 
     private static final HttpClient client = HttpClient.newHttpClient();
 

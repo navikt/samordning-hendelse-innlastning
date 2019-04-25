@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HendelseMapperTest {
+class HendelseMapperTest {
 
     @Test
-    public void mapToHendelse() {
+    void mapToHendelse() {
         SamordningHendelse samordningHendelse = new SamordningHendelse();
         samordningHendelse.setVedtakId("JKL678");
         samordningHendelse.setIdentifikator("987654321");

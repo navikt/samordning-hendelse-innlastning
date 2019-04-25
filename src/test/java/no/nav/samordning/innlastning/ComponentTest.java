@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @Testcontainers
-public class ComponentTest {
+class ComponentTest {
 
     private static final int NUMBER_OF_BROKERS = 1;
     private static final String TOPIC_NAME = KafkaConfiguration.SAMORDNING_HENDELSE_TOPIC;
