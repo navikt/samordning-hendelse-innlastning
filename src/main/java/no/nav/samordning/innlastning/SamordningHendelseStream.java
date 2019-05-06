@@ -8,7 +8,7 @@ import org.apache.kafka.streams.kstream.KStream;
 
 import java.util.Properties;
 
-public class SamordningHendelseStream {
+class SamordningHendelseStream {
 
     static KafkaStreams build(String kafkaTopic, Properties streamProperties, Database database) {
 
@@ -16,8 +16,8 @@ public class SamordningHendelseStream {
 
         KStream<String, SamordningHendelse> samordningHendelseStream = builder.stream(kafkaTopic);
 
-        samordningHendelseStream.mapValues((key, samordningHendelse) -> SamordningHendelseMapper.mapToHendelse(samordningHendelse))
-                .foreach((key, hendelse) -> database.insert(hendelse));
+        samordningHendelseStream.mapValues((key, samordningHendelse) -> SamordningHendelseMapper.toJson(samordningHendelse))
+                .foreach((key, hendelseJson) -> database.insert(hendelseJson));
 
         return new KafkaStreams(builder.build(), streamProperties);
     }
