@@ -15,6 +15,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.sql.DataSource;
 import java.util.*;
@@ -83,12 +84,13 @@ class ComponentTest {
         SamordningHendelse samordningHendelse = new SamordningHendelse(IDENTIFIKATOR, YTELSESTYPE, VEDTAK_ID, FOM, TOM);
 
         String expectedHendelse = "{" +
-                "\"fom\": \"" + FOM + "\", " +
-                "\"tom\": \"" + TOM + "\", " +
-                "\"vedtakId\": \"" + VEDTAK_ID + "\", " +
+                "\"identifikator\": \"" + IDENTIFIKATOR + "\", " +
                 "\"ytelsesType\": \"" + YTELSESTYPE + "\", " +
-                "\"identifikator\": \"" + IDENTIFIKATOR + "\"" +
+                "\"vedtakId\": \"" + VEDTAK_ID + "\", " +
+                "\"fom\": \"" + FOM + "\", " +
+                "\"tom\": \"" + TOM + "\"" +
                 "}";
+        String expectedHendelseJson = new ObjectMapper().writeValueAsString(expectedHendelse);
 
         ProducerRecord<String, SamordningHendelse> record = new ProducerRecord<>(TOPIC_NAME, null, samordningHendelse);
         populate_hendelse_topic(record);
@@ -101,7 +103,7 @@ class ComponentTest {
         DataSource postgresqlDatasource = createPgsqlDatasource(postgresqlContainer);
         String actualHendelse = getFirstJsonHendelseFromDb(postgresqlDatasource);
 
-        assertEquals(expectedHendelse, actualHendelse);
+        assertEquals(expectedHendelseJson, actualHendelse);
 
     }
 

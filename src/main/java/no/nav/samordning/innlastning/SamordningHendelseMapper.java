@@ -1,17 +1,18 @@
 package no.nav.samordning.innlastning;
 
-import no.nav.samordning.innlastning.database.Hendelse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.samordning.schema.SamordningHendelse;
 
 class SamordningHendelseMapper {
 
-    static Hendelse mapToHendelse(SamordningHendelse samordningHendelse) {
-        Hendelse hendelse = new Hendelse();
-        hendelse.setVedtakId(samordningHendelse.getVedtakId());
-        hendelse.setFom(samordningHendelse.getFom());
-        hendelse.setTom(samordningHendelse.getTom());
-        hendelse.setIdentifikator(samordningHendelse.getIdentifikator());
-        hendelse.setYtelsesType(samordningHendelse.getYtelsesType());
-        return hendelse;
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
+    static String toJson(SamordningHendelse samordningHendelse) {
+        try {
+            return objectMapper.writeValueAsString(samordningHendelse.toString());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Mapping of hendelse failed: " + samordningHendelse.toString(), e);
+        }
     }
 }

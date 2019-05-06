@@ -1,6 +1,7 @@
 package no.nav.samordning.innlastning.database;
 
 import com.zaxxer.hikari.HikariConfig;
+import no.nav.samordning.schema.SamordningHendelse;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import org.junit.jupiter.api.*;
 
@@ -9,6 +10,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import com.zaxxer.hikari.HikariDataSource;
+import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import static no.nav.samordning.innlastning.DatabaseTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +28,7 @@ class DatabaseIntegrationTest {
     private static final String TOM = "2010-02-04";
 
     private static Database database;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Container
     private static PostgreSQLContainer postgresqlContainer = setUpPostgresContainer();
@@ -44,21 +48,22 @@ class DatabaseIntegrationTest {
     @Order(1)
     void hendelse_inserted_to_db_as_json() throws Exception {
 
-        Hendelse hendelse = getTestHendelse();
-        database.insert(hendelse);
+        String hendelseJson = getTestHendelseJson();
+        database.insert(hendelseJson);
 
         String expectedHendelse = "{" +
-                "\"fom\": \"" + FOM + "\", " +
-                "\"tom\": \"" + TOM + "\", " +
-                "\"vedtakId\": \"" + VEDTAK_ID + "\", " +
+                "\"identifikator\": \"" + IDENTIFIKATOR + "\", " +
                 "\"ytelsesType\": \"" + YTELSES_TYPE + "\", " +
-                "\"identifikator\": \"" + IDENTIFIKATOR + "\"" +
+                "\"vedtakId\": \"" + VEDTAK_ID + "\", " +
+                "\"fom\": \"" + FOM + "\", " +
+                "\"tom\": \"" + TOM + "\"" +
                 "}";
+        String expectedHendelseJson = objectMapper.writeValueAsString(expectedHendelse);
 
         HikariDataSource pgsqlDatasource = createPgsqlDatasource(postgresqlContainer);
         String actualHendelse = getFirstJsonHendelseFromDb(pgsqlDatasource);
 
-        assertEquals(expectedHendelse, actualHendelse);
+        assertEquals(expectedHendelseJson, actualHendelse);
     }
 
     @Test
@@ -69,7 +74,7 @@ class DatabaseIntegrationTest {
 
         assertThrows(
                 FailedInsert.class,
-                () -> database.insert(getTestHendelse())
+                () -> database.insert(getTestHendelseJson())
         );
     }
 
@@ -78,13 +83,13 @@ class DatabaseIntegrationTest {
         vaultContainer.stop();
     }
 
-    private Hendelse getTestHendelse() {
-        Hendelse hendelse = new Hendelse();
-        hendelse.setVedtakId(VEDTAK_ID);
-        hendelse.setIdentifikator(IDENTIFIKATOR);
-        hendelse.setYtelsesType(YTELSES_TYPE);
-        hendelse.setFom(FOM);
-        hendelse.setTom(TOM);
-        return hendelse;
+    private String getTestHendelseJson() throws Exception {
+        SamordningHendelse samordningHendelse = new SamordningHendelse();
+        samordningHendelse.setVedtakId(VEDTAK_ID);
+        samordningHendelse.setIdentifikator(IDENTIFIKATOR);
+        samordningHendelse.setYtelsesType(YTELSES_TYPE);
+        samordningHendelse.setFom(FOM);
+        samordningHendelse.setTom(TOM);
+        return objectMapper.writeValueAsString(samordningHendelse.toString());
     }
 }
