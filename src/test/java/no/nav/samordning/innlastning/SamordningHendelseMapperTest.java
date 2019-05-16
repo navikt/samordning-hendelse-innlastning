@@ -35,5 +35,4 @@ class SamordningHendelseMapperTest {
 
         assertEquals(expectedHendelseJson, SamordningHendelseMapper.toJson(samordningHendelse));
     }
-
 }
