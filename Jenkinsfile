@@ -7,8 +7,6 @@ node {
     def DOCKER_REPO = "repo.adeo.no:5443"
     def COMMIT_HASH_LONG
     def COMMIT_HASH_SHORT
-    cleanWs()
-
     stage('checkout') {
         try {
             sh "git init"
@@ -77,6 +75,7 @@ node {
             sh "kubectl config use-context dev-fss"
             sh "kubectl apply -f nais.yaml"
             sh "kubectl rollout status -w deployment/${APP_NAME}"
+            sh "sed -i \'s/${COMMIT_HASH_SHORT}/latest/\' nais.yaml"
             github.commitStatus("success", "navikt/${APP_NAME}", APP_TOKEN, COMMIT_HASH_LONG)
             slackSend([color  : 'good',
                        message: "Successfully deployed ${APP_NAME}:<https://github.com/navikt/${APP_NAME}/commit/${COMMIT_HASH_LONG}|`${COMMIT_HASH_SHORT}`>" + " to dev-fss :feelsgoodman:"
