@@ -9,6 +9,8 @@ spec:
   image: repo.adeo.no:5443/samordning-hendelse-innlastning:latest
   port: 8080
   team: teampeon
+  ingresses:
+    - https://samordning-hendelse-innlastning.nais.preprod.local
   liveness:
     path: isAlive
   readiness:
