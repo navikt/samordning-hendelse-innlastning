@@ -34,7 +34,7 @@ public class Application {
     Application(Map<String, String> env) {
 
         KafkaConfiguration kafkaConfiguration = new KafkaConfiguration(env);
-        Properties streamProperties = kafkaConfiguration.streamsConfiguration();
+        Properties streamProperties = kafkaConfiguration.streamConfiguration();
 
         String jdbcUrl = getFromEnvironment(env, DB_URL_ENV_KEY);
         String mountPath = getFromEnvironment(env, DB_MOUNT_PATH_ENV_KEY);

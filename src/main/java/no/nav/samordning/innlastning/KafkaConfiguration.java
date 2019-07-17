@@ -22,7 +22,6 @@ class KafkaConfiguration {
         static final String SCHEMA_REGISTRY_URL = "SCHEMA_REGISTRY_URL";
         static final String USERNAME = "KAFKA_USERNAME";
         static final String PASSWORD = "KAFKA_PASSWORD";
-        static final String SASL_JAAS_CONFIG = "KAFKA_SASL_JAAS_CONFIG";
         static final String SASL_MECHANISM = "KAFKA_SASL_MECHANISM";
         static final String SECURITY_PROTOCOL = "KAFKA_SECURITY_PROTOCOL";
     }
@@ -36,35 +35,29 @@ class KafkaConfiguration {
     KafkaConfiguration(Map<String, String> env) {
         this.bootstrapServers = getFromEnvironment(env, Properties.BOOTSTRAP_SERVERS);
         this.schemaUrl = env.getOrDefault(Properties.SCHEMA_REGISTRY_URL, "http://kafka-schema-registry.tpa:8081");
-        this.saslJaasConfig = nullIfEmpty(env.getOrDefault(Properties.SASL_JAAS_CONFIG, createPlainLoginModule(env.get(Properties.USERNAME), env.get(Properties.PASSWORD))));
-        this.saslMechanism = nullIfEmpty(env.getOrDefault(Properties.SASL_MECHANISM, "PLAIN"));
-        this.securityProtocol = nullIfEmpty(env.getOrDefault(Properties.SECURITY_PROTOCOL, "SASL_SSL"));
+        this.saslMechanism = env.getOrDefault(Properties.SASL_MECHANISM, "PLAIN");
+        this.securityProtocol = env.getOrDefault(Properties.SECURITY_PROTOCOL, "SASL_SSL");
+        this.saslJaasConfig = createPlainLoginModule(
+                getFromEnvironment(env, Properties.USERNAME),
+                getFromEnvironment(env, Properties.PASSWORD)
+        );
     }
 
     private String createPlainLoginModule(String username, String password) {
         return "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" + username + "\" password=\"" + password + "\";";
     }
 
-
-    private Map<String, Object> getCommonConfigs() {
+    private Map<String, Object> commonConfiguration() {
         Map<String, Object> configs = new HashMap<>();
         configs.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-
-        if (securityProtocol != null) {
-            configs.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol);
-        }
-        if (saslMechanism != null) {
-            configs.put(SaslConfigs.SASL_MECHANISM, saslMechanism);
-        }
-        if (saslJaasConfig != null) {
-            configs.put(SaslConfigs.SASL_JAAS_CONFIG, saslJaasConfig);
-        }
-
+        configs.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol);
+        configs.put(SaslConfigs.SASL_MECHANISM, saslMechanism);
+        configs.put(SaslConfigs.SASL_JAAS_CONFIG, saslJaasConfig);
         return configs;
     }
 
-    java.util.Properties streamsConfiguration() {
-        Map<String, Object> configs = getCommonConfigs();
+    java.util.Properties streamConfiguration() {
+        Map<String, Object> configs = commonConfiguration();
         final java.util.Properties streamsConfiguration = new java.util.Properties();
         streamsConfiguration.putAll(configs);
         streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, "samordning-hendelse-innlastning-olthn65gv3");
@@ -73,12 +66,5 @@ class KafkaConfiguration {
         streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
         streamsConfiguration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         return streamsConfiguration;
-    }
-
-    private static String nullIfEmpty(String value) {
-        if ("".equals(value)) {
-            return null;
-        }
-        return value;
     }
 }
