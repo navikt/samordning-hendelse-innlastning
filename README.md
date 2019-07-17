@@ -8,7 +8,7 @@ Grafana dashboards brukes for å f.eks. monitorere minne, cpu-bruk og andre metr
 Se [samordning-hendelse-innlastning grafana dasboard](https://grafana.adeo.no/d/k0h45tQmz/samordning-hendelse-innlastning?orgId=1)
 
 #### Logging
-[Kibana](https://logs.adeo.no/app/kibana) benyttes til logging. Søk på f.eks. ```application:samordning-hendelse-innlastning AND environment:q``` for logginnslag fra preprod.
+[Kibana](https://logs.adeo.no/app/kibana) benyttes til logging. Søk på f.eks. ```application:samordning-hendelse-innlastning AND envclass:q``` for logginnslag fra preprod.
 
 #### Bygging
 Jenkins benyttes til bygging. Status på bygg finner du her: [samordning-hendelse-innlastning jenkins](https://jenkins-peon.adeo.no/job/samordning-hendelse-innlastning/)
