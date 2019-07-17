@@ -17,7 +17,7 @@ class KafkaConfiguration {
 
     static final String SAMORDNING_HENDELSE_TOPIC = "aapen-samordning-samordningspliktigHendelse-v1";
 
-    public static class Properties {
+    static class Properties {
         static final String BOOTSTRAP_SERVERS = "KAFKA_BOOTSTRAP_SERVERS";
         static final String SCHEMA_REGISTRY_URL = "SCHEMA_REGISTRY_URL";
         static final String USERNAME = "KAFKA_USERNAME";

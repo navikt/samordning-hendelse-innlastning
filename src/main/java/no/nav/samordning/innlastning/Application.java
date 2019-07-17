@@ -16,7 +16,7 @@ import java.util.Properties;
 import static no.nav.samordning.innlastning.ApplicationProperties.*;
 import static no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil.*;
 
-public class Application {
+class Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
     private static final String DB_URL_ENV_KEY = "DB_URL";
@@ -49,7 +49,7 @@ public class Application {
             LOG.error("Database access error. Could not connect to " + jdbcUrl, vaultError);
             System.exit(1);
         } catch (RuntimeException e) {
-            throw new MissingVaultToken("Vault token missing. Check DB env variables", e);
+            throw new MissingVaultToken(e);
         }
 
         NaisHttpServer naisHttpServer = new NaisHttpServer(this::isRunning, () -> true);
@@ -60,7 +60,7 @@ public class Application {
             System.exit(1);
         }
 
-        hendelseStream = SamordningHendelseStream.build(KafkaConfiguration.SAMORDNING_HENDELSE_TOPIC, streamProperties, database);
+        hendelseStream = SamordningHendelseStream.build(streamProperties, database);
         setUncaughtStreamExceptionHandler();
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }

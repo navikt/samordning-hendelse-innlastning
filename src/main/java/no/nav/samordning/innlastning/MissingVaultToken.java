@@ -1,5 +1,5 @@
 package no.nav.samordning.innlastning;
 
-public class MissingVaultToken extends RuntimeException {
-    public MissingVaultToken(String message, Throwable cause) { super(message, cause); }
+class MissingVaultToken extends RuntimeException {
+    MissingVaultToken(Throwable cause) { super("Vault token missing. Check DB env variables", cause); }
 }
