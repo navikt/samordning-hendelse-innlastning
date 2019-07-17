@@ -61,20 +61,22 @@ public class Application {
         }
 
         hendelseStream = SamordningHendelseStream.build(KafkaConfiguration.SAMORDNING_HENDELSE_TOPIC, streamProperties, database);
+        setUncaughtStreamExceptionHandler();
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+    }
 
+    private void setUncaughtStreamExceptionHandler() {
         hendelseStream.setUncaughtExceptionHandler((t, e) -> {
             LOG.error("Uncaught exception in thread {}, closing samordningHendelseStream", t, e);
             hendelseStream.close();
         });
-
-        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
 
     private boolean isRunning() {
         return hendelseStream.state().isRunning();
     }
 
-    public void run() {
+    void run() {
         hendelseStream.setStateListener((newState, oldState) -> {
             LOG.debug("State change from {} to {}", oldState, newState);
             if ((oldState.equals(KafkaStreams.State.PENDING_SHUTDOWN) && newState.equals(KafkaStreams.State.NOT_RUNNING))
