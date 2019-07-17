@@ -1,6 +1,5 @@
 package no.nav.samordning.innlastning;
 
-import com.zaxxer.hikari.HikariDataSource;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import no.nav.common.KafkaEnvironment;
