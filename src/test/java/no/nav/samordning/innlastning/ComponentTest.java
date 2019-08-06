@@ -10,7 +10,6 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -19,6 +18,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import javax.sql.DataSource;
 import java.util.*;
 
+import static no.nav.samordning.innlastning.Application.*;
 import static no.nav.samordning.innlastning.DatabaseTestUtils.*;
 import static no.nav.samordning.innlastning.NaisEndpointTest.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,19 +42,16 @@ class ComponentTest {
     @Container
     private static PostgreSQLContainer postgresqlContainer = setUpPostgresContainer();
 
-    @Container
-    private static GenericContainer vaultContainer = setUpVaultContainer();
-
     private static Application app;
     private static KafkaEnvironment kafkaEnvironment;
 
     @BeforeAll
-    static void setUp() throws Exception {
+    static void setUp() {
         System.setProperty("zookeeper.jmx.log4j.disable", Boolean.TRUE.toString());
-
         kafkaEnvironment = new KafkaEnvironment(NUMBER_OF_BROKERS, TOPICS, Collections.emptyList(), true, false, Collections.emptyList(), true, new Properties());
-        runVaultContainerCommands(vaultContainer, postgresqlContainer.getContainerIpAddress());
-        app = new Application(testEnvironment());
+        KafkaConfiguration kafkaConfiguration = new KafkaConfiguration(testEnvironment());
+        Application.ApplicationDataSource dataSourceWithoutVaultIntegration = new DataSourceWithoutVaultIntegration();
+        app = new Application(dataSourceWithoutVaultIntegration, kafkaConfiguration);
         app.run();
     }
 
@@ -66,9 +63,6 @@ class ComponentTest {
         testEnvironment.put("KAFKA_PASSWORD", KAFKA_PASSWORD);
         testEnvironment.put("KAFKA_SASL_MECHANISM", "PLAIN");
         testEnvironment.put("KAFKA_SECURITY_PROTOCOL", "PLAINTEXT");
-        testEnvironment.put("DB_URL", postgresqlContainer.getJdbcUrl());
-        testEnvironment.put("DB_MOUNT_PATH", DB_MOUNT_PATH);
-        testEnvironment.put("DB_ROLE", DB_ROLE);
         return testEnvironment;
     }
 
@@ -95,7 +89,7 @@ class ComponentTest {
         populate_hendelse_topic(record);
 
         //Application needs to process records before the tests resume
-        Thread.sleep(5*1000);
+        Thread.sleep(5 * 1000);
 
         nais_platform_prerequisites_runs_OK();
 
@@ -129,5 +123,12 @@ class ComponentTest {
         producerProperties.put(ProducerConfig.RETRIES_CONFIG, Integer.MAX_VALUE);
 
         return new KafkaProducer<>(producerProperties);
+    }
+
+    public static class DataSourceWithoutVaultIntegration implements ApplicationDataSource {
+        @Override
+        public DataSource dataSource() {
+            return DatabaseTestUtils.createPgsqlDatasource(postgresqlContainer);
+        }
     }
 }

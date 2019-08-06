@@ -1,57 +1,31 @@
 package no.nav.samordning.innlastning;
 
-import com.zaxxer.hikari.HikariConfig;
 import no.nav.opptjening.nais.NaisHttpServer;
 import no.nav.samordning.innlastning.database.Database;
-import no.nav.samordning.innlastning.database.DatasourceConfig;
-import no.nav.vault.jdbc.hikaricp.VaultError;
 import org.apache.kafka.streams.KafkaStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.util.Map;
 import java.util.Properties;
 
-import static no.nav.samordning.innlastning.ApplicationProperties.*;
-import static no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil.*;
 
 class Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
-    private static final String DB_URL_ENV_KEY = "DB_URL";
-    private static final String DB_MOUNT_PATH_ENV_KEY = "DB_MOUNT_PATH";
-    private static final String DB_ROLE_ENV_KEY = "DB_ROLE";
     private final KafkaStreams hendelseStream;
-
     private volatile boolean shutdown = false;
 
     public static void main(String[] args) {
-        Application app = new Application(System.getenv());
+        KafkaConfiguration kafkaConfiguration = new KafkaConfiguration(System.getenv());
+        ApplicationDataSource vaultDataSource = new VaultDataSource(System.getenv());
+        Application app = new Application(vaultDataSource, kafkaConfiguration);
         app.run();
     }
 
-    Application(Map<String, String> env) {
-
-        KafkaConfiguration kafkaConfiguration = new KafkaConfiguration(env);
+    Application(ApplicationDataSource applicationDataSource, KafkaConfiguration kafkaConfiguration) {
         Properties streamProperties = kafkaConfiguration.streamConfiguration();
-
-        String jdbcUrl = getFromEnvironment(env, DB_URL_ENV_KEY);
-        String mountPath = getFromEnvironment(env, DB_MOUNT_PATH_ENV_KEY);
-        String role = getFromEnvironment(env, DB_ROLE_ENV_KEY);
-
-        Database database = null;
-        try {
-            HikariConfig datasourceConfig = DatasourceConfig.getDatasourceConfig(jdbcUrl);
-            DataSource dataSource = createHikariDataSourceWithVaultIntegration(datasourceConfig, mountPath, role);
-            database = new Database(dataSource);
-        } catch (VaultError vaultError) {
-            LOG.error("Database access error. Could not connect to " + jdbcUrl, vaultError);
-            System.exit(1);
-        } catch (RuntimeException e) {
-            throw new MissingVaultToken(e);
-        }
-
+        Database database = new Database(applicationDataSource.dataSource());
         NaisHttpServer naisHttpServer = new NaisHttpServer(this::isRunning, () -> true);
         try {
             naisHttpServer.start();
@@ -59,7 +33,6 @@ class Application {
             LOG.error("NaisServer failed to start", e);
             System.exit(1);
         }
-
         hendelseStream = SamordningHendelseStream.build(streamProperties, database);
         setUncaughtStreamExceptionHandler();
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
@@ -89,10 +62,14 @@ class Application {
     }
 
     void shutdown() {
-        if(shutdown) {
+        if (shutdown) {
             return;
         }
         shutdown = true;
         hendelseStream.close();
+    }
+
+    public interface ApplicationDataSource {
+        DataSource dataSource();
     }
 }
