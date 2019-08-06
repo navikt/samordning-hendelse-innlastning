@@ -33,6 +33,7 @@ class ComponentTest {
     private static final String KAFKA_USERNAME = "srvTest";
     private static final String KAFKA_PASSWORD = "opensourcedPassword";
 
+    private static final String TP_NR = "1234";
     private static final String IDENTIFIKATOR = "12345678901";
     private static final String YTELSESTYPE = "AP";
     private static final String VEDTAK_ID = "ABC123";
@@ -74,9 +75,10 @@ class ComponentTest {
     @Test
     void innlastning_reads_hendelser_from_kafka_and_persists_hendelse_to_db_as_json() throws Exception {
 
-        SamordningHendelse samordningHendelse = new SamordningHendelse(IDENTIFIKATOR, YTELSESTYPE, VEDTAK_ID, FOM, TOM);
+        SamordningHendelse samordningHendelse = new SamordningHendelse(TP_NR, IDENTIFIKATOR, YTELSESTYPE, VEDTAK_ID, FOM, TOM);
 
         String expectedHendelse = "{" +
+                "\"tpnr\": \"" + TP_NR + "\", " +
                 "\"identifikator\": \"" + IDENTIFIKATOR + "\", " +
                 "\"ytelsesType\": \"" + YTELSESTYPE + "\", " +
                 "\"vedtakId\": \"" + VEDTAK_ID + "\", " +
