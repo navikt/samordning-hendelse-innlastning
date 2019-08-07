@@ -50,6 +50,18 @@ public class DatabaseTestUtils {
         return jsonHendelse.get(0);
     }
 
+    public static String getFirstTpnrFromDb(DataSource pgsqlDatasource) throws SQLException {
+
+        List<String> tpnrList = new ArrayList<>();
+        Statement statement = pgsqlDatasource.getConnection().createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT TPNR FROM HENDELSER LIMIT 1");
+
+        while ( resultSet.next()) {
+            tpnrList.add(resultSet.getString("TPNR"));
+        }
+        return tpnrList.get(0);
+    }
+
     public static HikariDataSource createPgsqlDatasource(PostgreSQLContainer postgreSQLContainer) {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setMaxLifetime(1000);

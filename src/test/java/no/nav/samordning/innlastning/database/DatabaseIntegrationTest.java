@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DatabaseIntegrationTest {
 
-    private static final String TP_NR = "1234";
+    private static final String TPNR = "1234";
     private static final String VEDTAK_ID = "JKL678";
     private static final String IDENTIFIKATOR = "987654321";
     private static final String YTELSES_TYPE = "AAP";
@@ -42,7 +42,7 @@ class DatabaseIntegrationTest {
     void hendelse_inserted_to_db_as_json() throws Exception {
 
         String hendelseJson = getTestHendelseJson();
-        database.insert(hendelseJson, TP_NR);
+        database.insert(hendelseJson, TPNR);
 
         String expectedHendelse = "{" +
                 "\"identifikator\": \"" + IDENTIFIKATOR + "\", " +
@@ -55,8 +55,10 @@ class DatabaseIntegrationTest {
 
         HikariDataSource pgsqlDatasource = createPgsqlDatasource(postgresqlContainer);
         String actualHendelse = getFirstJsonHendelseFromDb(pgsqlDatasource);
+        String actualTpnr = getFirstTpnrFromDb(pgsqlDatasource);
 
         assertEquals(expectedHendelseJson, actualHendelse);
+        assertEquals(TPNR, actualTpnr);
     }
 
     @Test
@@ -67,7 +69,7 @@ class DatabaseIntegrationTest {
 
         assertThrows(
                 FailedInsert.class,
-                () -> database.insert(getTestHendelseJson(), TP_NR)
+                () -> database.insert(getTestHendelseJson(), TPNR)
         );
     }
 

@@ -33,7 +33,7 @@ class ComponentTest {
     private static final String KAFKA_USERNAME = "srvTest";
     private static final String KAFKA_PASSWORD = "opensourcedPassword";
 
-    private static final String TP_NR = "1234";
+    private static final String TPNR = "1234";
     private static final String IDENTIFIKATOR = "12345678901";
     private static final String YTELSESTYPE = "AP";
     private static final String VEDTAK_ID = "ABC123";
@@ -86,7 +86,7 @@ class ComponentTest {
                 "}";
         String expectedHendelseJson = new ObjectMapper().writeValueAsString(expectedHendelse);
 
-        ProducerRecord<String, SamordningHendelse> record = new ProducerRecord<>(TOPIC_NAME, TP_NR, samordningHendelse);
+        ProducerRecord<String, SamordningHendelse> record = new ProducerRecord<>(TOPIC_NAME, TPNR, samordningHendelse);
         populate_hendelse_topic(record);
 
         //Application needs to process records before the tests resume
@@ -96,8 +96,10 @@ class ComponentTest {
 
         DataSource postgresqlDatasource = createPgsqlDatasource(postgresqlContainer);
         String actualHendelse = getFirstJsonHendelseFromDb(postgresqlDatasource);
+        String actualTpnr = getFirstTpnrFromDb(postgresqlDatasource);
 
         assertEquals(expectedHendelseJson, actualHendelse);
+        assertEquals(TPNR, actualTpnr);
 
     }
 
