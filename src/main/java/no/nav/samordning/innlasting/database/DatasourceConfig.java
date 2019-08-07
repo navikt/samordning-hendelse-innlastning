@@ -1,4 +1,4 @@
-package no.nav.samordning.innlastning.database;
+package no.nav.samordning.innlasting.database;
 
 import com.zaxxer.hikari.HikariConfig;
 

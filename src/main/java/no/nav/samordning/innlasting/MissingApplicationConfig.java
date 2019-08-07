@@ -1,4 +1,4 @@
-package no.nav.samordning.innlastning;
+package no.nav.samordning.innlasting;
 
 class MissingApplicationConfig extends RuntimeException {
     MissingApplicationConfig(String message) { super(message); }

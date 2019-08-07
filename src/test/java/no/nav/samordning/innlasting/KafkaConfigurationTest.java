@@ -1,11 +1,11 @@
-package no.nav.samordning.innlastning;
+package no.nav.samordning.innlasting;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static no.nav.samordning.innlastning.KafkaConfiguration.Properties.*;
+import static no.nav.samordning.innlasting.KafkaConfiguration.Properties.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class KafkaConfigurationTest {

@@ -2,7 +2,7 @@
 @Library('peon-pipeline') _
 
 node {
-    def APP_NAME    = "samordning-hendelse-innlastning"
+    def APP_NAME    = "samordning-hendelse-innlasting"
     def APP_TOKEN   = github.generateAppToken()
     def DOCKER_REPO = "repo.adeo.no:5443"
     def COMMIT_HASH_LONG

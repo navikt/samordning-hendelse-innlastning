@@ -1,4 +1,4 @@
-package no.nav.samordning.innlastning;
+package no.nav.samordning.innlasting;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
@@ -18,9 +18,9 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import javax.sql.DataSource;
 import java.util.*;
 
-import static no.nav.samordning.innlastning.Application.*;
-import static no.nav.samordning.innlastning.DatabaseTestUtils.*;
-import static no.nav.samordning.innlastning.NaisEndpointTest.*;
+import static no.nav.samordning.innlasting.Application.*;
+import static no.nav.samordning.innlasting.DatabaseTestUtils.*;
+import static no.nav.samordning.innlasting.NaisEndpointTest.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -73,7 +73,7 @@ class ComponentTest {
     }
 
     @Test
-    void innlastning_reads_hendelser_from_kafka_and_persists_hendelse_to_db() throws Exception {
+    void innlasting_reads_hendelser_from_kafka_and_persists_hendelse_to_db() throws Exception {
 
         SamordningHendelse samordningHendelse = new SamordningHendelse(IDENTIFIKATOR, YTELSESTYPE, VEDTAK_ID, FOM, TOM);
 

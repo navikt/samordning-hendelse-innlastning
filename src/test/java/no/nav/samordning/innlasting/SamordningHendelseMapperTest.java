@@ -1,4 +1,4 @@
-package no.nav.samordning.innlastning;
+package no.nav.samordning.innlasting;
 
 import no.nav.samordning.schema.SamordningHendelse;
 import org.junit.jupiter.api.Test;

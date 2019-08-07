@@ -1,4 +1,4 @@
-package no.nav.samordning.innlastning;
+package no.nav.samordning.innlasting;
 
 import java.util.Map;
 import java.util.Optional;

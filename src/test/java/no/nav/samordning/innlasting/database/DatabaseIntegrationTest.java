@@ -1,6 +1,6 @@
-package no.nav.samordning.innlastning.database;
+package no.nav.samordning.innlasting.database;
 
-import no.nav.samordning.innlastning.DatabaseTestUtils;
+import no.nav.samordning.innlasting.DatabaseTestUtils;
 import no.nav.samordning.schema.SamordningHendelse;
 import org.junit.jupiter.api.*;
 
@@ -10,7 +10,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.zaxxer.hikari.HikariDataSource;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static no.nav.samordning.innlastning.DatabaseTestUtils.*;
+import static no.nav.samordning.innlasting.DatabaseTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

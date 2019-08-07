@@ -1,7 +1,7 @@
-package no.nav.samordning.innlastning;
+package no.nav.samordning.innlasting;
 
 import com.zaxxer.hikari.HikariConfig;
-import no.nav.samordning.innlastning.database.DatasourceConfig;
+import no.nav.samordning.innlasting.database.DatasourceConfig;
 import no.nav.vault.jdbc.hikaricp.VaultError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import javax.sql.DataSource;
 import java.util.Map;
 
-import static no.nav.samordning.innlastning.ApplicationProperties.getFromEnvironment;
+import static no.nav.samordning.innlasting.ApplicationProperties.getFromEnvironment;
 import static no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration;
 
 public class VaultDataSource implements Application.ApplicationDataSource {

@@ -1,4 +1,4 @@
-package no.nav.samordning.innlastning.database;
+package no.nav.samordning.innlasting.database;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

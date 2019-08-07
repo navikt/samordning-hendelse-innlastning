@@ -1,4 +1,4 @@
-package no.nav.samordning.innlastning;
+package no.nav.samordning.innlasting;
 
 import java.net.URI;
 import java.net.http.HttpClient;

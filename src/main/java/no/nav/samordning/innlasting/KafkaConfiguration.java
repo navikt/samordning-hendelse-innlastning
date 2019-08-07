@@ -1,4 +1,4 @@
-package no.nav.samordning.innlastning;
+package no.nav.samordning.innlasting;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
@@ -11,7 +11,7 @@ import org.apache.kafka.streams.StreamsConfig;
 import java.util.HashMap;
 import java.util.Map;
 
-import static no.nav.samordning.innlastning.ApplicationProperties.getFromEnvironment;
+import static no.nav.samordning.innlasting.ApplicationProperties.getFromEnvironment;
 
 class KafkaConfiguration {
 
@@ -60,7 +60,7 @@ class KafkaConfiguration {
         Map<String, Object> configs = commonConfiguration();
         final java.util.Properties streamsConfiguration = new java.util.Properties();
         streamsConfiguration.putAll(configs);
-        streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, "samordning-hendelse-innlastning-olthn65gv3");
+        streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, "samordning-hendelse-innlasting-olthn65gv3");
         streamsConfiguration.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaUrl);
         streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde.class);
         streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);

@@ -1,6 +1,6 @@
-package no.nav.samordning.innlastning;
+package no.nav.samordning.innlasting;
 
-import no.nav.samordning.innlastning.database.Database;
+import no.nav.samordning.innlasting.database.Database;
 import no.nav.samordning.schema.SamordningHendelse;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -21,4 +21,6 @@ class SamordningHendelseStream {
 
         return new KafkaStreams(streamBuilder.build(), streamProperties);
     }
+
+
 }

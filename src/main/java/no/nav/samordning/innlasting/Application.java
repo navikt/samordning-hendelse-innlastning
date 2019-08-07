@@ -1,7 +1,7 @@
-package no.nav.samordning.innlastning;
+package no.nav.samordning.innlasting;
 
 import no.nav.opptjening.nais.NaisHttpServer;
-import no.nav.samordning.innlastning.database.Database;
+import no.nav.samordning.innlasting.database.Database;
 import org.apache.kafka.streams.KafkaStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
