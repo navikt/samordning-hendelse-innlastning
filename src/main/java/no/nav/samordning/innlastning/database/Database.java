@@ -24,7 +24,7 @@ public class Database {
         this.dataSource = dataSource;
     }
 
-    public void insert(String hendelseJson) {
+    public void insert(String hendelseJson, String tpnr) {
         try (Connection connection = dataSource.getConnection()) {
             PGobject jsonbObject = createJsonbObject(hendelseJson);
             PreparedStatement insertStatement = connection.prepareStatement(INSERT_RECORD_SQL);

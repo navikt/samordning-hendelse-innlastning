@@ -10,15 +10,15 @@ import java.util.Properties;
 
 class SamordningHendelseStream {
 
+    private static final StreamsBuilder streamBuilder = new StreamsBuilder();
+
     static KafkaStreams build(Properties streamProperties, Database database) {
 
-        StreamsBuilder builder = new StreamsBuilder();
+        KStream<String, SamordningHendelse> samordningHendelseStream = streamBuilder.stream(KafkaConfiguration.SAMORDNING_HENDELSE_TOPIC);
 
-        KStream<String, SamordningHendelse> samordningHendelseStream = builder.stream(KafkaConfiguration.SAMORDNING_HENDELSE_TOPIC);
+        samordningHendelseStream.mapValues((tpnrKey, samordningHendelse) -> SamordningHendelseMapper.toJson(samordningHendelse))
+                .foreach((tpnrKey, hendelseJson) -> database.insert(hendelseJson, tpnrKey));
 
-        samordningHendelseStream.mapValues((key, samordningHendelse) -> SamordningHendelseMapper.toJson(samordningHendelse))
-                .foreach((key, hendelseJson) -> database.insert(hendelseJson));
-
-        return new KafkaStreams(builder.build(), streamProperties);
+        return new KafkaStreams(streamBuilder.build(), streamProperties);
     }
 }

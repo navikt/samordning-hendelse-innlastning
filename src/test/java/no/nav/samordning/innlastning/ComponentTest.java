@@ -73,12 +73,11 @@ class ComponentTest {
     }
 
     @Test
-    void innlastning_reads_hendelser_from_kafka_and_persists_hendelse_to_db_as_json() throws Exception {
+    void innlastning_reads_hendelser_from_kafka_and_persists_hendelse_to_db() throws Exception {
 
-        SamordningHendelse samordningHendelse = new SamordningHendelse(TP_NR, IDENTIFIKATOR, YTELSESTYPE, VEDTAK_ID, FOM, TOM);
+        SamordningHendelse samordningHendelse = new SamordningHendelse(IDENTIFIKATOR, YTELSESTYPE, VEDTAK_ID, FOM, TOM);
 
         String expectedHendelse = "{" +
-                "\"tpnr\": \"" + TP_NR + "\", " +
                 "\"identifikator\": \"" + IDENTIFIKATOR + "\", " +
                 "\"ytelsesType\": \"" + YTELSESTYPE + "\", " +
                 "\"vedtakId\": \"" + VEDTAK_ID + "\", " +
@@ -87,7 +86,7 @@ class ComponentTest {
                 "}";
         String expectedHendelseJson = new ObjectMapper().writeValueAsString(expectedHendelse);
 
-        ProducerRecord<String, SamordningHendelse> record = new ProducerRecord<>(TOPIC_NAME, null, samordningHendelse);
+        ProducerRecord<String, SamordningHendelse> record = new ProducerRecord<>(TOPIC_NAME, TP_NR, samordningHendelse);
         populate_hendelse_topic(record);
 
         //Application needs to process records before the tests resume
@@ -115,7 +114,6 @@ class ComponentTest {
     }
 
     private Producer<String, SamordningHendelse> testProducer() {
-
         Properties producerProperties = new Properties();
         producerProperties.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafkaEnvironment.getBrokersURL());
         producerProperties.put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, kafkaEnvironment.getSchemaRegistry().getUrl());
