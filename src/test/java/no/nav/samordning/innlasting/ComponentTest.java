@@ -11,6 +11,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.sql.DataSource;
 
+import static java.lang.Boolean.TRUE;
 import static java.lang.Thread.sleep;
 import static no.nav.samordning.innlasting.Application.ApplicationDataSource;
 import static no.nav.samordning.innlasting.DatabaseTestUtils.*;
@@ -37,7 +38,7 @@ class ComponentTest {
 
     @BeforeAll
     static void setUp() {
-        System.setProperty("zookeeper.jmx.log4j.disable", Boolean.TRUE.toString());
+        System.setProperty("zookeeper.jmx.log4j.disable", TRUE.toString());
         var dataSourceWithoutVaultIntegration = new DataSourceWithoutVaultIntegration();
         KafkaTestEnvironment.setup();
         app = new Application(dataSourceWithoutVaultIntegration, kafkaConfiguration);
@@ -51,7 +52,6 @@ class ComponentTest {
 
     @Test
     void innlasting_reads_hendelser_from_kafka_and_persists_hendelse_to_db() throws Exception {
-
         var samordningHendelse = new SamordningHendelse(IDENTIFIKATOR, YTELSESTYPE, VEDTAK_ID, FOM, TOM);
 
         var expectedHendelse = new ObjectMapper().writeValueAsString("{" +
@@ -75,7 +75,6 @@ class ComponentTest {
 
         assertEquals(expectedHendelse, actualHendelse);
         assertEquals(TPNR, actualTpnr);
-
     }
 
     private void nais_platform_prerequisites_runs_OK() throws Exception {
