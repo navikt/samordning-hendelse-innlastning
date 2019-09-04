@@ -29,7 +29,7 @@ class KafkaTestEnvironment {
     static KafkaConfiguration kafkaConfiguration;
     private static Producer<String, SamordningHendelse> testProducer;
 
-    static void setup() {
+    static void setupKafkaEnvironment() {
         kafkaEnvironment = new KafkaEnvironment(NUMBER_OF_BROKERS, TOPICS, emptyList(), true, false, emptyList(), true, new Properties());
         kafkaConfiguration = new KafkaConfiguration(testEnvironment());
         testProducer = testProducer();

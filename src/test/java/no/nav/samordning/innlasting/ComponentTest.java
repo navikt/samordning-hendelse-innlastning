@@ -11,12 +11,10 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.sql.DataSource;
 
-import static java.lang.Boolean.TRUE;
 import static java.lang.Thread.sleep;
 import static no.nav.samordning.innlasting.Application.ApplicationDataSource;
 import static no.nav.samordning.innlasting.DatabaseTestUtils.*;
-import static no.nav.samordning.innlasting.KafkaTestEnvironment.kafkaConfiguration;
-import static no.nav.samordning.innlasting.KafkaTestEnvironment.populate_hendelse_topic;
+import static no.nav.samordning.innlasting.KafkaTestEnvironment.*;
 import static no.nav.samordning.innlasting.NaisEndpointTest.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -38,10 +36,9 @@ class ComponentTest {
 
     @BeforeAll
     static void setUp() {
-        System.setProperty("zookeeper.jmx.log4j.disable", TRUE.toString());
-        var dataSourceWithoutVaultIntegration = new DataSourceWithoutVaultIntegration();
-        KafkaTestEnvironment.setup();
-        app = new Application(dataSourceWithoutVaultIntegration, kafkaConfiguration);
+        System.setProperty("zookeeper.jmx.log4j.disable", "TRUE");
+        setupKafkaEnvironment();
+        app = new Application(new DataSourceWithoutVaultIntegration(), kafkaConfiguration);
         app.run();
     }
 
@@ -86,7 +83,7 @@ class ComponentTest {
     public static class DataSourceWithoutVaultIntegration implements ApplicationDataSource {
         @Override
         public DataSource dataSource() {
-            return DatabaseTestUtils.createPgsqlDatasource(postgresqlContainer);
+            return createPgsqlDatasource(postgresqlContainer);
         }
     }
 }
