@@ -14,7 +14,6 @@ import no.nav.samordning.innlasting.NaisEndpointTest.metrics_endpoint_returns_20
 import no.nav.samordning.schema.SamordningHendelse
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -25,17 +24,24 @@ import java.lang.Thread.sleep
 @Testcontainers
 internal class ComponentTest {
 
+    init {
+        System.setProperty("zookeeper.jmx.log4j.disable", "TRUE")
+        setupKafkaEnvironment()
+        app = Application(DataSourceWithoutVaultIntegration(), kafkaConfiguration)
+        app.run()
+    }
+
     @Test
     @Throws(Exception::class)
     fun innlasting_reads_hendelser_from_kafka_and_persists_hendelse_to_db() {
-        val samordningHendelse = SamordningHendelse(IDENTIFIKATOR, YTELSESTYPE, VEDTAK_ID, FOM, TOM)
+        val samordningHendelse = SamordningHendelse(IDENTIFIKATOR, YTELSESTYPE, VEDTAK_ID, SAM_ID, FOM, TOM)
 
-        val expectedHendelse = ObjectMapper().writeValueAsString("""{"identifikator": "$IDENTIFIKATOR", "ytelsesType": "$YTELSESTYPE", "vedtakId": "$VEDTAK_ID", "fom": "$FOM", "tom": "$TOM"}""")
+        val expectedHendelse = ObjectMapper().writeValueAsString("""{"identifikator": "$IDENTIFIKATOR", "ytelsesType": "$YTELSESTYPE", "vedtakId": "$VEDTAK_ID", "samId": "$SAM_ID", "fom": "$FOM", "tom": "$TOM"}""")
 
         populate_hendelse_topic(TPNR, samordningHendelse)
 
         //Application needs to process records before the tests resume
-        sleep((5 * 1000).toLong())
+        sleep(5000L)
 
         nais_platform_prerequisites_runs_OK()
 
@@ -64,6 +70,7 @@ internal class ComponentTest {
         private const val IDENTIFIKATOR = "12345678901"
         private const val YTELSESTYPE = "AP"
         private const val VEDTAK_ID = "ABC123"
+        private const val SAM_ID = "BOGUS"
         private const val FOM = "01-01-2020"
         private const val TOM = "01-01-2010"
 
@@ -71,15 +78,6 @@ internal class ComponentTest {
         private val postgresqlContainer = setUpPostgresContainer()
 
         private lateinit var app: Application
-
-        @BeforeAll
-        @JvmStatic
-        fun setUp() {
-            System.setProperty("zookeeper.jmx.log4j.disable", "TRUE")
-            setupKafkaEnvironment()
-            app = Application(DataSourceWithoutVaultIntegration(), kafkaConfiguration)
-            app.run()
-        }
 
         @AfterAll
         @JvmStatic

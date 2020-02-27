@@ -47,7 +47,7 @@
         <dependency>
             <groupId>no.nav.samordning</groupId>
             <artifactId>samordning-schema</artifactId>
-            <version>10</version>
+            <version>82a83c7</version>
         </dependency>
 
         <!-- Kotlin -->

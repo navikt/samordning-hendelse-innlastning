@@ -1,10 +1,10 @@
 package no.nav.samordning.innlasting
 
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.samordning.schema.SamordningHendelse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper
 
 internal class SamordningHendelseMapperTest {
 
@@ -16,11 +16,12 @@ internal class SamordningHendelseMapperTest {
             setVedtakId(VEDTAK_ID)
             setIdentifikator(IDENTIFIKATOR)
             setYtelsesType(YTELSES_TYPE)
+            setSamId(SAM_ID)
             setFom(FOM)
             setTom(TOM)
         }
 
-        val expectedHendelse = """{"identifikator": "$IDENTIFIKATOR", "ytelsesType": "$YTELSES_TYPE", "vedtakId": "$VEDTAK_ID", "fom": "$FOM", "tom": "$TOM"}"""
+        val expectedHendelse = """{"identifikator": "$IDENTIFIKATOR", "ytelsesType": "$YTELSES_TYPE", "vedtakId": "$VEDTAK_ID", "samId": "$SAM_ID", "fom": "$FOM", "tom": "$TOM"}"""
         val expectedHendelseJson = ObjectMapper().writeValueAsString(expectedHendelse)
 
         assertEquals(expectedHendelseJson, SamordningHendelseMapper.toJson(samordningHendelse))
@@ -29,6 +30,7 @@ internal class SamordningHendelseMapperTest {
     companion object {
 
         private const val VEDTAK_ID = "JKL678"
+        private const val SAM_ID = "BOGUS"
         private const val IDENTIFIKATOR = "987654321"
         private const val YTELSES_TYPE = "AAP"
         private const val FOM = "2000-01-01"

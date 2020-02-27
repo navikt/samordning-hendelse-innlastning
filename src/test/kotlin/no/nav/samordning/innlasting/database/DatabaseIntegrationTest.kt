@@ -20,6 +20,7 @@ internal class DatabaseIntegrationTest {
         @Throws(Exception::class)
         get() = with(SamordningHendelse().run {
             setVedtakId(VEDTAK_ID)
+            setSamId(SAM_ID)
             setIdentifikator(IDENTIFIKATOR)
             setYtelsesType(YTELSES_TYPE)
             setFom(FOM)
@@ -35,7 +36,7 @@ internal class DatabaseIntegrationTest {
         val hendelseJson = testHendelseJson
         database.insert(hendelseJson, TPNR)
 
-        val expectedHendelse = """{"identifikator": "$IDENTIFIKATOR", "ytelsesType": "$YTELSES_TYPE", "vedtakId": "$VEDTAK_ID", "fom": "$FOM", "tom": "$TOM"}"""
+        val expectedHendelse = """{"identifikator": "$IDENTIFIKATOR", "ytelsesType": "$YTELSES_TYPE", "vedtakId": "$VEDTAK_ID", "samId": "$SAM_ID", "fom": "$FOM", "tom": "$TOM"}"""
         val expectedHendelseJson = objectMapper.writeValueAsString(expectedHendelse)
 
         val pgsqlDatasource = createPgsqlDatasource(postgresqlContainer)
@@ -63,6 +64,7 @@ internal class DatabaseIntegrationTest {
 
         private const val TPNR = "1234"
         private const val VEDTAK_ID = "JKL678"
+        private const val SAM_ID = "BOGUS"
         private const val IDENTIFIKATOR = "987654321"
         private const val YTELSES_TYPE = "AAP"
         private const val FOM = "2000-01-01"
