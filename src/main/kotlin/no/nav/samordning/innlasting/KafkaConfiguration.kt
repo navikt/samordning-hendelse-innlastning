@@ -48,6 +48,6 @@ internal class KafkaConfiguration(env: Map<String, String>) {
         const val PASSWORD = "KAFKA_PASSWORD"
         const val SASL_MECHANISM = "KAFKA_SASL_MECHANISM"
         const val SECURITY_PROTOCOL = "KAFKA_SECURITY_PROTOCOL"
-        const val SAMORDNING_HENDELSE_TOPIC = "aapen-samordning-samordningspliktigHendelse-v1"
+        const val SAMORDNING_HENDELSE_TOPIC = "aapen-samordning-samordningspliktigHendelse-v2"
     }
 }
