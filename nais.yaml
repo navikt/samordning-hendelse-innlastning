@@ -4,11 +4,11 @@ metadata:
   name: samordning-hendelse-innlasting
   namespace: default
   labels:
-    team: teampeon
+    team: {{team}}
 spec:
   image: repo.adeo.no:5443/samordning-hendelse-innlasting:latest
   port: 8080
-  team: teampeon
+    team: {{team}}
   ingresses:
     - https://samordning-hendelse-innlasting.nais.preprod.local
   liveness:

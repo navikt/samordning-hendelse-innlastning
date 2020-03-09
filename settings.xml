@@ -1,0 +1,14 @@
+<settings>
+    <servers>
+        <server>
+            <id>samordning-schema</id>
+            <username>token</username>
+            <password>${env.GITHUB_TOKEN}</password>
+        </server>
+        <server>
+            <id>nais-support</id>
+            <username>token</username>
+            <password>${env.GITHUB_TOKEN}</password>
+        </server>
+    </servers>
+</settings>

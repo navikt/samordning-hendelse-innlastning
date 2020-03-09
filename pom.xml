@@ -26,11 +26,24 @@
 
         <kafka.version>2.0.0</kafka.version>
         <confluent.version>5.0.0</confluent.version>
+        <nais-support.version>b60ddc2</nais-support.version>
+        <samordning-schema.version>9d489ef</samordning-schema.version>
 
         <mainClass>no.nav.samordning.innlasting.Application</mainClass>
     </properties>
 
     <repositories>
+        <repository>
+            <id>samordning-schema</id>
+            <name>Samordning Schema GitHub Package Registry</name>
+            <url>https://maven.pkg.github.com/navikt/samordning-schema</url>
+        </repository>
+        <repository>
+            <id>nais-support</id>
+            <name>Nais Support GitHub Package Registry</name>
+            <url>https://maven.pkg.github.com/navikt/tortuga-nais-support</url>
+        </repository>
+
         <repository>
             <id>confluent</id>
             <url>https://packages.confluent.io/maven/</url>
@@ -47,7 +60,7 @@
         <dependency>
             <groupId>no.nav.samordning</groupId>
             <artifactId>samordning-schema</artifactId>
-            <version>9d489ef</version>
+            <version>${samordning-schema.version}</version>
         </dependency>
 
         <!-- Kotlin -->
@@ -61,7 +74,7 @@
         <dependency>
             <groupId>no.nav.opptjening</groupId>
             <artifactId>nais-support</artifactId>
-            <version>19</version>
+            <version>${nais-support.version}</version>
         </dependency>
 
         <!-- Kafka -->
