@@ -8,7 +8,7 @@ metadata:
 spec:
   image: {{image}}
   port: 8080
-    team: {{team}}
+  team: {{team}}
   ingresses:
     - https://samordning-hendelse-innlasting.nais.preprod.local
   liveness:
