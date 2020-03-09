@@ -30,7 +30,7 @@ jobs:
           echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin docker.pkg.github.com
       - name: Create Docker tag
         run: |
-          echo "docker.pkg.github.com"/"$GITHUB_REPOSITORY"/"$GITHUB_REPOSITORY" > .docker_image
+          echo "docker.pkg.github.com"/"$GITHUB_REPOSITORY"/"samordning-hendelse-innlasting" > .docker_image
           echo "$(date "+%Y.%m.%d")-$(git rev-parse --short HEAD)" > .docker_tag
       - name: Build Docker image
         run: |
