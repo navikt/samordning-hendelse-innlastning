@@ -35,7 +35,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t $(cat .docker_image):$(cat .docker_tag) .
-          echo "::set-env name=INN_IMAGE::$(cat .docker_image):$(cat .docker_tag)"
+          echo "::set-env name=IMAGE::$(cat .docker_image):$(cat .docker_tag)"
       - name: Push Docker image
         run: "docker push $(cat .docker_image):$(cat .docker_tag)"
 
@@ -46,6 +46,6 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-fss
           RESOURCE: nais.yaml
-          IMAGE: ${{ env.INN_IMAGE }}
+          IMAGE: ${{ env.IIMAGE }}
           TEAM: pensjonsamhandling
           VARS: nais-vars.yaml
