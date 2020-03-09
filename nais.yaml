@@ -6,7 +6,7 @@ metadata:
   labels:
     team: {{team}}
 spec:
-  image: repo.adeo.no:5443/samordning-hendelse-innlasting:latest
+  image: {{image}}
   port: 8080
     team: {{team}}
   ingresses:
