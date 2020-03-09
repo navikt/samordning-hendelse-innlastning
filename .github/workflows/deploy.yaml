@@ -15,28 +15,19 @@ jobs:
         with:
           java-version: '12.x'
 
-      # Build and release
+      # Build
       - name: Build
         run: mvn --settings settings.xml clean install
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-      - name: Set version
-        run: |
-          echo "$(git rev-parse --short HEAD)" > .version
-          mvn versions:set -DnewVersion="$(cat .version)" -DprocessAllModules
-      - name: Release
-        run: mvn deploy -DskipTests=true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Build image
       - name: Login to Github Package Registry
         env:
           DOCKER_USERNAME: token
           DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin docker.pkg.github.com
-
-      # Build image
       - name: Create Docker tag
         run: |
           echo "docker.pkg.github.com"/"$GITHUB_REPOSITORY" > .docker_image
