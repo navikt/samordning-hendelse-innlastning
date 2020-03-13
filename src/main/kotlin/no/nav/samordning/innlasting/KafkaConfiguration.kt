@@ -9,6 +9,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsConfig.*
+import java.io.File
 import java.util.*
 
 internal class KafkaConfiguration(env: Map<String, String>) {
@@ -18,8 +19,8 @@ internal class KafkaConfiguration(env: Map<String, String>) {
     private val saslMechanism = env.getOrDefault(SASL_MECHANISM, "PLAIN")
     private val securityProtocol = env.getOrDefault(SECURITY_PROTOCOL, "SASL_SSL")
     private val saslJaasConfig = createPlainLoginModule(
-            getFromEnvironment(env, USERNAME),
-            getFromEnvironment(env, PASSWORD)
+            readConfigFile(USERNAME_PATH),
+            readConfigFile(PASSWORD_PATH)
     )
 
     private fun createPlainLoginModule(username: String, password: String) =
@@ -41,11 +42,13 @@ internal class KafkaConfiguration(env: Map<String, String>) {
             put(AUTO_OFFSET_RESET_CONFIG, "earliest")
     }
 
+    private fun readConfigFile(path: String) = File(path).readText()
+
     companion object {
         const val BOOTSTRAP_SERVERS = "KAFKA_BOOTSTRAP_SERVERS"
         const val SCHEMA_REGISTRY_URL = "SCHEMA_REGISTRY_URL"
-        const val USERNAME = "KAFKA_USERNAME"
-        const val PASSWORD = "KAFKA_PASSWORD"
+        const val USERNAME_PATH = "/secret/serviceuser/username"
+        const val PASSWORD_PATH = "/secret/serviceuser/password"
         const val SASL_MECHANISM = "KAFKA_SASL_MECHANISM"
         const val SECURITY_PROTOCOL = "KAFKA_SECURITY_PROTOCOL"
         const val SAMORDNING_HENDELSE_TOPIC = "aapen-samordning-samordningspliktigHendelse-v2"

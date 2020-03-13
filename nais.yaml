@@ -17,6 +17,9 @@ spec:
     path: isReady
   vault:
     enabled: true
+    paths:
+      - kvPath: /serviceuser/data/{{cluster}}/srvsamordning-hendelse-innlastning
+        mountPath: /secret/serviceuser
   replicas:
     min: 1
     max: 1
