@@ -10,7 +10,7 @@ spec:
   port: 8080
   team: {{team}}
   ingresses:
-    - https://samordning-hendelse-innlasting.nais.preprod.local
+    - {{ingress}}
   liveness:
     path: isAlive
   readiness:
