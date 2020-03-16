@@ -1,2 +1,2 @@
-export KAFKA_USERNAME=$(cat /secret/credentials/KAFKA_USERNAME)
-export KAFKA_PASSWORD=$(cat /secret/serviceuser/KAFKA_PASSWORD)
+export KAFKA_USERNAME=$(cat /secret/serviceuser/username)
+export KAFKA_PASSWORD=$(cat /secret/serviceuser/password)

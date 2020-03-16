@@ -18,7 +18,7 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: /serviceuser/data/{{cluster}}/srvsamordning-hendelse-innlastning
+      - kvPath: /serviceuser/{{cluster}}/srvsamordning-hendelse-innlastning
         mountPath: /secret
   replicas:
     min: 1
