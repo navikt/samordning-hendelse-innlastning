@@ -19,7 +19,7 @@ spec:
     enabled: true
     paths:
       - kvPath: /serviceuser/data/{{cluster}}/srvsamordning-hendelse-innlastning
-        mountPath: /secret/serviceuser
+        mountPath: /secret
   replicas:
     min: 1
     max: 1
