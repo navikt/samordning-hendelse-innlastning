@@ -18,9 +18,9 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: /serviceuser/data/{{cluster}}/srvsamordning-hendelse-innlasting
+      - kvPath: /serviceuser/data/{{srvcluster}}/srvsamordning-hendelse-innlasting
         mountPath: /secret/serviceuser
-      - kvPath: /kv/preprod/fss/samordning-hendelse-innlasting/default
+      - kvPath: /kv/{{appcluster}}/fss/samordning-hendelse-innlasting/default
         mountPath: /var/run/secrets/nais.io/vault   
   replicas:
     min: 1

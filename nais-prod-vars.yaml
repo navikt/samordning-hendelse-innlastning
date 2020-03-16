@@ -1,3 +1,4 @@
 team: pensjonsamhandling
 ingress: https://samordning-hendelse-innlasting.nais.adeo.no
-cluster: prod
+srvcluster: prod
+appcluster: prod

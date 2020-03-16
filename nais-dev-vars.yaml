@@ -1,3 +1,4 @@
 team: pensjonsamhandling
 ingress: https://samordning-hendelse-innlasting.nais.preprod.local
-cluster: dev
+srvcluster: dev
+appcluster: preprod
