@@ -10,7 +10,4 @@ Se [samordning-hendelse-innlasting grafana dasboard](https://grafana.adeo.no/d/k
 #### Logging
 [Kibana](https://logs.adeo.no/app/kibana) benyttes til logging. Søk på f.eks. ```application:samordning-hendelse-innlasting AND envclass:q``` for logginnslag fra preprod.
 
-#### Bygging
-Jenkins benyttes til bygging. Status på bygg finner du her: [samordning-hendelse-innlasting jenkins](https://jenkins-peon.adeo.no/job/samordning-hendelse-innlasting/)
-
-Kontakt Team Peon dersom du har noen spørsmål. Vi finnes blant annet på Slack, i kanalen [#peon](https://nav-it.slack.com/messages/C6M80587R/)
+Kontakt Team Samhandling dersom du har noen spørsmål. Vi finnes blant annet på Slack, i kanalen [#samhandling_pensjonsområdet](https://nav-it.slack.com/archives/CQ08JC3UG)
