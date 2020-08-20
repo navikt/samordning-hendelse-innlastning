@@ -37,8 +37,8 @@ class Database(private val dataSource: DataSource) {
         private const val INSERT_STATEMENT = "INSERT INTO HENDELSER(TPNR, HENDELSE_DATA) VALUES(?, to_json(?::json))"
         private const val POSTGRES_OBJECT_TYPE = "jsonb"
 
-        private const val PERSONNUMMER_START_INDEX = 25
-        private const val PERSONNUMMER_END_INDEX = 30
+        private const val PERSONNUMMER_START_INDEX = 28
+        private const val PERSONNUMMER_END_INDEX = 34
     }
 }
 
