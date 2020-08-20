@@ -9,9 +9,7 @@ import org.junit.jupiter.api.Test
 internal class SamordningHendelseMapperTest {
 
     @Test
-    @Throws(Exception::class)
     fun mapToJson() {
-
         val samordningHendelse = SamordningHendelse().apply {
             setVedtakId(VEDTAK_ID)
             setIdentifikator(IDENTIFIKATOR)
@@ -28,7 +26,6 @@ internal class SamordningHendelseMapperTest {
     }
 
     companion object {
-
         private const val VEDTAK_ID = "JKL678"
         private const val SAM_ID = "BOGUS"
         private const val IDENTIFIKATOR = "987654321"
